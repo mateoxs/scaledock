@@ -1020,6 +1020,18 @@
       display: inline-flex; align-items: center; justify-content: center; gap: 8px;
       color: var(--blue-main); border-color: var(--border-highlight); background: rgba(235, 244, 255, 0.9);
     }
+
+    /* Button bar: the ZIP button is the hero; the other buttons share the row below it */
+    .button-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
+    .button-bar .btn-primary-green {
+      grid-column: 1 / -1;
+      min-height: 62px;
+      font-size: 1.12rem;
+      padding: 16px 24px;
+      white-space: nowrap;
+    }
+    .button-bar .btn-primary-green svg { width: 22px; height: 22px; }
+    .button-bar .btn-secondary { min-width: 0; white-space: nowrap; }
   </style>
 </head>
 <body>
