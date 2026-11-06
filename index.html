@@ -1,0 +1,2091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>ScaleDock — Simple &amp; Fast Bulk PDF Resizer</title>
+  <meta name="description" content="ScaleDock: private, in-browser bulk PDF resizer. Files never leave your device." />
+  <meta name="theme-color" content="#1d63e8" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📄%3C/text%3E%3C/svg%3E" />
+
+  <!-- Crisp, Comforting Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Client-Side PDF & ZIP Engines -->
+  <script>window.__sdFallback = function (el) { var s = document.createElement('script'); s.src = el.getAttribute('data-fallback'); document.head.appendChild(s); };</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" integrity="sha512-XMVd28F1oH/O71fzwBnV7HucLxVwtxf26XV8P4wPk26EDxuGZ91N8bsOttmnomcCD3CS5ZMRL50H0GgOHvegtg==" crossorigin="anonymous" referrerpolicy="no-referrer" data-fallback="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js" onerror="__sdFallback(this)"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js" integrity="sha512-z8IYLHO8bTgFqj+yrPyIJnzBDf7DDhWwiEsk4sY+Oe6J2M+WQequeGS7qioI5vT6rXgVRb4K1UVQC5ER7MKzKQ==" crossorigin="anonymous" referrerpolicy="no-referrer" data-fallback="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js" onerror="__sdFallback(this)"></script>
+
+  <style>
+    /* ==========================================================================
+       1. COOL BLUE PALETTE & CRISP TYPOGRAPHY
+       Zero fractional transforms to prevent any pixel or font blurring.
+       ========================================================================== */
+    :root {
+      --bg-canvas: #eaf1fb;
+      --bg-surface: #ffffff;
+      --bg-soft: #f3f7fd;
+      --bg-highlight: #ebf4ff;
+      --bg-dropzone: #f0f7ff;
+      --bg-dropzone-active: #e0efff;
+
+      --border-soft: #d9e4f2;
+      --border-input: #b9c9df;
+      --border-highlight: #b3d1fa;
+      --border-focus: #2f7df6;
+
+      --blue-main: #1d63e8;
+      --blue-dark: #174ec2;
+      --blue-tint: #eaf2ff;
+
+      --cyan-main: #0891b2;
+      --cyan-dark: #0e7490;
+      --cyan-tint: #e6f9fd;
+
+      --text-primary: #0a1b36;
+      --text-secondary: #2a3f5f;
+      --text-muted: #5a6f8d;
+
+      --radius-sm: 10px;
+      --radius-md: 14px;
+      --radius-lg: 18px;
+
+      --shadow-soft: 0 6px 24px -4px rgba(23, 78, 194, 0.10), 0 2px 6px -1px rgba(23, 78, 194, 0.06);
+      --shadow-focus: 0 0 0 3px rgba(47, 125, 246, 0.2);
+
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', Consolas, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      background-color: var(--bg-canvas);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    .page-wrap {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 16px 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* ==========================================================================
+       2. TOP BAR (CLEAN & CALM)
+       ========================================================================== */
+    .header-bar {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-md);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .brand-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 11px;
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.22);
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+
+    .brand-sub {
+      font-size: 0.83rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .trust-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--cyan-tint);
+      border: 1px solid #a5f3fc;
+      color: #155e75;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 6px 13px;
+      border-radius: 999px;
+    }
+
+    .trust-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--cyan-main);
+    }
+
+    /* ==========================================================================
+       3. MAIN WORKSPACE GRID (EVERYTHING ESSENTIAL ON ONE SCREEN)
+       ========================================================================== */
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: 460px 1fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 940px) {
+      .workspace-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .section-block {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .badge-saved {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--blue-main);
+      background: var(--blue-tint);
+      border: 1px solid var(--border-highlight);
+      padding: 2px 9px;
+      border-radius: 999px;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    /* Mode Switcher */
+    .mode-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      background: var(--bg-soft);
+      padding: 5px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-soft);
+    }
+
+    .mode-button {
+      appearance: none;
+      border: 1.5px solid transparent;
+      background: transparent;
+      color: var(--text-muted);
+      padding: 9px 10px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-sans);
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+      text-align: center;
+    }
+
+    .mode-button span {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 500;
+      margin-top: 1px;
+      opacity: 0.85;
+    }
+
+    .mode-button:hover {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.6);
+    }
+
+    .mode-button.active {
+      background: var(--bg-surface);
+      color: var(--blue-main);
+      border-color: var(--border-focus);
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
+    }
+
+    /* Target Input & Presets */
+    .target-input-grid {
+      display: grid;
+      grid-template-columns: 1fr 92px;
+      gap: 8px;
+    }
+
+    .text-input,
+    .select-input {
+      width: 100%;
+      padding: 9px 12px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      background: var(--bg-surface);
+      border: 1.5px solid var(--border-input);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-sans);
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .text-input::placeholder {
+      color: #7f98bd;
+      font-weight: 500;
+    }
+
+    .text-input:hover,
+    .select-input:hover {
+      border-color: #7f98bd;
+    }
+
+    .text-input:focus,
+    .select-input:focus {
+      outline: none;
+      border-color: var(--border-focus);
+      box-shadow: var(--shadow-focus);
+    }
+
+    .preset-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .preset-chip {
+      appearance: none;
+      background: var(--bg-soft);
+      border: 1px solid var(--border-soft);
+      color: var(--text-secondary);
+      font-family: var(--font-sans);
+      font-size: 0.76rem;
+      font-weight: 600;
+      padding: 5px 11px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    }
+
+    .preset-chip:hover {
+      border-color: var(--border-focus);
+      color: var(--blue-main);
+      background: var(--blue-tint);
+    }
+
+    .preset-chip.active {
+      background: var(--blue-tint);
+      border-color: var(--border-focus);
+      color: var(--blue-main);
+      font-weight: 700;
+    }
+
+    /* ==========================================================================
+       4. HIGHLIGHTED CUSTOM NAMING SECTION (UNHIDDEN & PROMINENT)
+       ========================================================================== */
+    .naming-highlight-card {
+      background: var(--bg-highlight);
+      border: 1.5px solid var(--border-highlight);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .naming-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--blue-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .naming-card-header span.optional-pill {
+      background: #dbeafe;
+      color: #1e40af;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.69rem;
+      font-weight: 700;
+      text-transform: none;
+    }
+
+    .naming-inputs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    @media (max-width: 520px) {
+      .naming-inputs-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .input-label-small {
+      display: block;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+
+    /* ==========================================================================
+       5. CRISP LIVE FILE NAME PREVIEW BOX (NO WORD BREAK GLITCHES)
+       Shows:
+       - Old File Name -> New File Name
+       - ZIP Name
+       - 📄 Inside: Folder/File.pdf
+       ========================================================================== */
+    .preview-card {
+      background: var(--bg-soft);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .preview-title {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--text-secondary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .preview-status-tag {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .preview-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-soft);
+      border-radius: 8px;
+      padding: 7px 10px;
+      overflow-x: auto;
+      white-space: nowrap;
+      scrollbar-width: thin;
+    }
+
+    .preview-row-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .name-pill-old {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      background: #edf3fb;
+      padding: 2px 8px;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+
+    .arrow-icon {
+      color: var(--blue-main);
+      font-weight: 800;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .name-pill-new {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #155e75;
+      background: var(--cyan-tint);
+      border: 1px solid #a5f3fc;
+      padding: 2px 8px;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+
+    .path-code {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--blue-main);
+      flex-shrink: 0;
+    }
+
+    /* ==========================================================================
+       6. RIGHT COLUMN: DROPZONE, GREEN ACTION BUTTON & LIVE PROGRESS
+       ========================================================================== */
+    .dropzone-area {
+      border: 2px dashed #60a5fa;
+      border-radius: var(--radius-md);
+      background: var(--bg-dropzone);
+      padding: 26px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: background-color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 200px;
+      user-select: none;
+    }
+
+    .dropzone-area:hover,
+    .dropzone-area.drag-over {
+      background: var(--bg-dropzone-active);
+      border-color: var(--blue-main);
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.08);
+    }
+
+    .dropzone-area input[type="file"] {
+      display: none;
+    }
+
+    .upload-circle {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-highlight);
+      color: var(--blue-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+    }
+
+    .dropzone-heading {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .dropzone-desc {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+
+    .file-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 15px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      background: var(--bg-surface);
+      color: var(--blue-main);
+      border: 1px solid var(--border-highlight);
+      box-shadow: 0 2px 5px rgba(15, 23, 42, 0.03);
+    }
+
+    .file-status-pill.ready {
+      background: var(--cyan-tint);
+      color: #155e75;
+      border-color: #67e8f9;
+    }
+
+    /* Action Buttons */
+    .button-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      appearance: none;
+      border: 1.5px solid transparent;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      font-weight: 700;
+      padding: 13px 18px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+    }
+
+    .btn:disabled {
+      opacity: 0.48;
+      cursor: not-allowed;
+      box-shadow: none !important;
+    }
+
+    .btn-primary-green {
+      flex: 1;
+      background: var(--cyan-main);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(8, 145, 178, 0.25);
+    }
+
+    .btn-primary-green:hover:not(:disabled) {
+      background: var(--cyan-dark);
+      box-shadow: 0 6px 18px rgba(8, 145, 178, 0.32);
+    }
+
+    .btn-secondary {
+      background: var(--bg-soft);
+      color: var(--text-secondary);
+      border-color: var(--border-input);
+      font-size: 0.85rem;
+      padding: 11px 15px;
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--bg-surface);
+      border-color: var(--text-muted);
+      color: var(--text-primary);
+    }
+
+    /* Progress & Metrics Card */
+    .progress-card {
+      background: var(--bg-soft);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-md);
+      padding: 13px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.83rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 9px;
+      background: #d6e3f5;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--blue-main) 0%, var(--cyan-main) 100%);
+      border-radius: 999px;
+      transition: width 0.18s ease;
+    }
+
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      padding-top: 4px;
+      border-top: 1px solid var(--border-soft);
+      font-size: 0.77rem;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 520px) {
+      .metrics-row {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .metrics-row strong {
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-weight: 600;
+    }
+
+    /* ==========================================================================
+       7. HIDDEN TECHNICAL DRAWER & CONCISE FOOTER
+       ========================================================================== */
+    .bottom-area {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    details.tech-drawer {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-md);
+      padding: 11px 18px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    details.tech-drawer summary {
+      font-size: 0.83rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      list-style: none;
+    }
+
+    details.tech-drawer summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details.tech-drawer summary::after {
+      content: 'Show Technical Options & Log ▾';
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--blue-main);
+    }
+
+    details.tech-drawer[open] summary::after {
+      content: 'Hide ▴';
+    }
+
+    .drawer-body {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      align-items: end;
+    }
+
+    .check-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .check-label input {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--blue-main);
+    }
+
+    .log-terminal {
+      background: #0b1a33;
+      color: #edf3fb;
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      max-height: 160px;
+      overflow-y: auto;
+      line-height: 1.6;
+    }
+
+    .log-item {
+      margin-bottom: 2px;
+    }
+
+    .log-item .ok { color: #5eead4; font-weight: 600; }
+    .log-item .warn { color: #fbbf24; font-weight: 600; }
+    .log-item .info { color: #60a5fa; font-weight: 600; }
+
+    .footer-note {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-md);
+      padding: 11px 18px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .footer-note strong {
+      color: var(--text-secondary);
+    }
+
+    /* ==========================================================================
+       8. COOL BLUE POLISH & BALANCE OVERRIDES
+       ========================================================================== */
+    html { background: var(--bg-canvas); }
+    body {
+      background:
+        radial-gradient(900px 420px at 6% -8%, rgba(96, 165, 250, 0.32), transparent 65%),
+        radial-gradient(800px 420px at 98% -4%, rgba(34, 211, 238, 0.20), transparent 60%),
+        linear-gradient(180deg, #eef4fc 0%, #e4edf9 100%);
+      background-attachment: fixed;
+    }
+
+    .brand-icon {
+      background: linear-gradient(135deg, #38bdf8 0%, #1d63e8 100%);
+      box-shadow: 0 6px 16px rgba(29, 99, 232, 0.28);
+    }
+
+    /* Even columns, even spacing */
+    .workspace-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); gap: 18px; }
+    @media (max-width: 940px) { .workspace-grid { grid-template-columns: 1fr; } }
+    .panel-card { padding: 22px; gap: 16px; }
+    .section-header { min-height: 28px; }
+
+    /* Left panel: aligned inputs, evenly spread presets */
+    .naming-inputs-grid { align-items: start; }
+    .input-label-small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .preset-row .preset-chip { flex: 1 1 auto; text-align: center; }
+
+    /* Preview rows: shared label column, clean ellipsis instead of scrollbars */
+    .preview-row { overflow: hidden; }
+    .preview-row-label { min-width: 74px; }
+    .name-pill-old, .name-pill-new, .path-code {
+      flex-shrink: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Right panel: dropzone fills the space, buttons sit right under it */
+    .dropzone-area { flex: 1 1 auto; min-height: 220px; }
+    .file-status-pill {
+      display: block;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .button-bar .btn { min-height: 48px; }
+    .btn-secondary { font-size: 0.9rem; padding: 11px 18px; }
+
+    .btn-primary-green {
+      background: linear-gradient(135deg, #1d63e8 0%, #0891b2 100%);
+      box-shadow: 0 8px 20px -4px rgba(29, 99, 232, 0.38);
+    }
+    .btn-primary-green:hover:not(:disabled) {
+      background: linear-gradient(135deg, #174ec2 0%, #0e7490 100%);
+      box-shadow: 0 10px 24px -4px rgba(29, 99, 232, 0.46);
+    }
+
+    /* Footer: two even columns + small credit */
+    .footer-note { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+    @media (max-width: 760px) { .footer-note { grid-template-columns: 1fr; } }
+    .credit-line {
+      text-align: center;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      padding: 2px 0 4px;
+    }
+    .credit-line strong { color: var(--blue-main); font-weight: 700; }
+
+    /* ==========================================================================
+       9. MOBILE & TOUCH FRIENDLY
+       ========================================================================== */
+    html { -webkit-text-size-adjust: 100%; }
+    html, body { min-height: 100dvh; }
+    button, .dropzone-area { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+    .page-wrap {
+      padding-top: calc(16px + env(safe-area-inset-top, 0px));
+      padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+      padding-left: max(20px, env(safe-area-inset-left, 0px));
+      padding-right: max(20px, env(safe-area-inset-right, 0px));
+    }
+    .panel-card, .section-block, .naming-highlight-card, .preview-card, .progress-card { min-width: 0; }
+    .log-terminal, .footer-note { overflow-wrap: anywhere; }
+    .txt-touch { display: none; }
+    .preview-title { flex-wrap: wrap; gap: 2px 10px; }
+
+    @media (hover: none) and (pointer: coarse) {
+      .txt-desktop { display: none; }
+      .txt-touch { display: inline; }
+    }
+
+    @media (pointer: coarse) {
+      .preset-chip { min-height: 38px; padding: 8px 14px; }
+      .check-label { min-height: 32px; }
+      .check-label input { width: 20px; height: 20px; }
+    }
+
+    @media (max-width: 760px) {
+      /* 16px stops iOS from zooming the page when an input is focused */
+      .text-input, .select-input { font-size: 16px !important; }
+      body { background-attachment: scroll; }
+    }
+
+    @media (max-width: 520px) {
+      .page-wrap {
+        gap: 12px;
+        padding-left: max(12px, env(safe-area-inset-left, 0px));
+        padding-right: max(12px, env(safe-area-inset-right, 0px));
+      }
+      .header-bar { padding: 12px 14px; }
+      .brand-title { font-size: 1.15rem; }
+      .brand-sub { font-size: 0.76rem; }
+      .trust-pill { width: 100%; justify-content: center; text-align: center; font-size: 0.74rem; }
+      .workspace-grid { gap: 12px; }
+      .panel-card { padding: 16px; gap: 14px; }
+      .section-header { flex-wrap: wrap; gap: 6px; }
+
+      /* Preview rows: label on top, names get the full width and wrap */
+      .preview-row { flex-wrap: wrap; white-space: normal; row-gap: 4px; }
+      .preview-row-label { flex-basis: 100%; min-width: 0; }
+      .name-pill-old, .name-pill-new, .path-code {
+        white-space: normal;
+        overflow-wrap: anywhere;
+        text-overflow: clip;
+        max-width: 100%;
+      }
+
+      .dropzone-area { min-height: 170px; padding: 20px 14px; }
+      .dropzone-heading { font-size: 0.98rem; }
+      .dropzone-desc { font-size: 0.8rem; }
+      .file-status-pill { white-space: normal; text-align: center; border-radius: 14px; overflow: visible; }
+
+      .button-bar { gap: 8px; }
+      .btn-primary-green { flex: 1 1 100%; }
+      .btn-secondary { flex: 1 1 calc(50% - 4px); }
+
+      .progress-top { align-items: flex-start; gap: 10px; }
+      #percentText { flex-shrink: 0; }
+
+      details.tech-drawer summary { flex-wrap: wrap; gap: 4px 10px; }
+      details.tech-drawer summary::after { content: 'Show ▾'; }
+      .tech-grid > div:last-child { text-align: left !important; }
+    }
+
+    /* ==========================================================================
+       10. EXTRAORDINARY POLISH — aurora, glass, motion
+       ========================================================================== */
+    body { isolation: isolate; }
+    body::before, body::after {
+      content: ''; position: fixed; z-index: -1; border-radius: 50%;
+      filter: blur(90px); opacity: 0.5; pointer-events: none;
+    }
+    body::before { width: 520px; height: 520px; top: -160px; left: -120px; background: #60a5fa; animation: sdDrift 18s ease-in-out infinite alternate; }
+    body::after { width: 460px; height: 460px; bottom: -140px; right: -100px; background: #22d3ee; animation: sdDrift 22s ease-in-out infinite alternate-reverse; }
+    @keyframes sdDrift { to { transform: translate(60px, 40px) scale(1.12); } }
+    @keyframes sdRise { from { opacity: 0; transform: translateY(14px); } }
+    @keyframes sdShine { 55%, 100% { transform: translateX(120%); } }
+    @keyframes sdFloat { 50% { transform: translateY(-6px); } }
+    @keyframes sdFlow { to { background-position: -200% 0; } }
+
+    .header-bar, .panel-card {
+      background: rgba(255, 255, 255, 0.72);
+      -webkit-backdrop-filter: blur(16px) saturate(1.4);
+      backdrop-filter: blur(16px) saturate(1.4);
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      box-shadow: 0 14px 44px -14px rgba(23, 78, 194, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+      animation: sdRise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    }
+    .panel-card:nth-child(2) { animation-delay: 0.12s; }
+    .brand-title {
+      background: linear-gradient(90deg, #0a1b36 0%, #1d63e8 55%, #0891b2 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+
+    .btn-primary-green { position: relative; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; }
+    .btn-primary-green::after {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.45) 50%, transparent 70%);
+      transform: translateX(-120%); animation: sdShine 3.6s ease-in-out infinite;
+    }
+    .btn-primary-green:disabled::after { display: none; }
+    .btn-primary-green:hover:not(:disabled) { transform: translateY(-2px); }
+
+    .dropzone-area {
+      background: radial-gradient(circle at 50% 0%, rgba(96, 165, 250, 0.2), transparent 70%), rgba(240, 247, 255, 0.8);
+      transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+    }
+    .dropzone-area:hover, .dropzone-area.drag-over {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 40px -16px rgba(29, 99, 232, 0.42), 0 0 0 4px rgba(47, 125, 246, 0.12);
+    }
+    .upload-circle { animation: sdFloat 3.2s ease-in-out infinite; box-shadow: 0 10px 28px -6px rgba(29, 99, 232, 0.45); }
+    .dropzone-area.drag-over .upload-circle { animation-duration: 0.8s; }
+
+    .progress-track { box-shadow: inset 0 1px 3px rgba(23, 78, 194, 0.18); }
+    #progressBar {
+      background: linear-gradient(90deg, #1d63e8, #06b6d4, #1d63e8); background-size: 200% 100%;
+      animation: sdFlow 2.4s linear infinite; box-shadow: 0 0 14px rgba(6, 182, 212, 0.55);
+    }
+    .preset-chip, .btn-secondary { transition: transform 0.15s, box-shadow 0.2s, background 0.2s; }
+    .preset-chip:hover, .btn-secondary:hover:not(:disabled) { transform: translateY(-1px); }
+    .preset-chip.active { box-shadow: 0 6px 16px -6px rgba(29, 99, 232, 0.55); }
+
+    /* Technical drawer extras */
+    details.tech-drawer { background: rgba(255, 255, 255, 0.62); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+    .tech-drawer .select-input { padding: 7px 10px; font-size: 0.84rem; }
+    .tech-section-title { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--blue-main); }
+    .tech-checks { display: flex; flex-direction: column; gap: 6px; }
+    .tech-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tech-actions .preset-chip { flex: 1 1 auto; text-align: center; }
+
+    /* Busy lock + cancel */
+    .is-busy .workspace-grid > .panel-card:first-child, .is-busy .tech-grid { pointer-events: none; opacity: 0.6; }
+    .is-busy #clearBtn { background: #fee2e2; color: #b91c1c; border-color: #fecaca; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrap">
+
+    <!-- ========================================================================
+         1. HEADER
+         ======================================================================== -->
+    <header class="header-bar">
+      <div class="brand-box">
+        <div class="brand-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <path d="M12 18v-6"></path>
+            <path d="M9 15l3 3 3-3"></path>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-title">ScaleDock</div>
+          <div class="brand-sub">Instant, easy PDF &amp; ZIP size converter — ready in one click</div>
+        </div>
+      </div>
+
+      <div class="trust-pill">
+        <span class="trust-dot"></span>
+        100% Private • Works directly in your browser
+      </div>
+    </header>
+
+    <!-- ========================================================================
+         2. MAIN WORKSPACE (ALL ESSENTIAL CONTROLS & PREVIEWS VISIBLE)
+         ======================================================================== -->
+    <main class="workspace-grid">
+
+      <!-- LEFT PANEL: MODE, TARGET SIZE, HIGHLIGHTED NAMING & LIVE PREVIEW -->
+      <section class="panel-card" aria-label="Settings and Naming Preview">
+        <!-- Step 1: Mode -->
+        <div class="section-block">
+          <div class="section-header">
+            <span>1. Choose Action</span>
+          </div>
+          <div class="mode-group" role="radiogroup" aria-label="Resize Mode">
+            <button type="button" class="mode-button active" id="modeIncreaseBtn">
+              Make Larger
+              <span>Increase Size (KB → MB)</span>
+            </button>
+            <button type="button" class="mode-button" id="modeDecreaseBtn">
+              Make Smaller
+              <span>Reduce Size (Compress)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 2: Target Size -->
+        <div class="section-block">
+          <div class="section-header">
+            <span>2. Target Size per PDF</span>
+            <span class="badge-saved" id="savedIndicator">Saved automatically ✓</span>
+          </div>
+          <div class="target-input-grid">
+            <input
+              type="number"
+              id="targetValueInput"
+              class="text-input"
+              min="1"
+              max="500000"
+              step="0.1"
+              inputmode="decimal"
+              value="2"
+              aria-label="Target size"
+            />
+            <select id="targetUnitSelect" class="select-input" aria-label="Unit">
+              <option value="MB" selected>MB</option>
+              <option value="KB">KB</option>
+            </select>
+          </div>
+          <div class="preset-row">
+            <button type="button" class="preset-chip" data-val="500" data-unit="KB">500 KB</button>
+            <button type="button" class="preset-chip" data-val="1" data-unit="MB">1 MB</button>
+            <button type="button" class="preset-chip active" data-val="2" data-unit="MB">2 MB (Default)</button>
+            <button type="button" class="preset-chip" data-val="5" data-unit="MB">5 MB</button>
+            <button type="button" class="preset-chip" data-val="10" data-unit="MB">10 MB</button>
+          </div>
+        </div>
+
+        <!-- Step 3: Highlighted Custom ZIP & Custom PDF File Name (Unhidden) -->
+        <div class="naming-highlight-card">
+          <div class="naming-card-header">
+            <span>3. Custom File Naming</span>
+            <span class="optional-pill">Optional</span>
+          </div>
+          <div class="naming-inputs-grid">
+            <div>
+              <label class="input-label-small" for="customZipInput">Custom ZIP name</label>
+              <input
+                type="text"
+                id="customZipInput"
+                class="text-input"
+                placeholder="Auto: PDF_Increased"
+              />
+            </div>
+            <div>
+              <label class="input-label-small" for="customPdfInput">Custom PDF name</label>
+              <input
+                type="text"
+                id="customPdfInput"
+                class="text-input"
+                placeholder="e.g. NewPDF → NewPDF1"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Live File Name Preview (Old -> New & Inside Folder Path) -->
+        <div class="preview-card" aria-live="polite">
+          <div class="preview-title">
+            <span>Live Output Name Preview</span>
+            <span class="preview-status-tag" id="previewModeNote">Default Automatic Naming</span>
+          </div>
+
+          <!-- Old File Name -> New File Name -->
+          <div class="preview-row" title="Shows original PDF name and the new renamed PDF">
+            <span class="preview-row-label">PDF:</span>
+            <span class="name-pill-old" id="previewOldPdf">PDF1.pdf</span>
+            <span class="arrow-icon">➔</span>
+            <span class="name-pill-new" id="previewNewPdf">PDF1_Increased.pdf</span>
+          </div>
+
+          <!-- ZIP Archive Name -->
+          <div class="preview-row" title="The downloaded ZIP archive name">
+            <span class="preview-row-label">📦 ZIP:</span>
+            <span class="name-pill-old" id="previewOldSource">PDF1.pdf</span>
+            <span class="arrow-icon">➔</span>
+            <span class="path-code" id="previewZipFile">PDF_Increased.zip</span>
+          </div>
+
+          <!-- Exact Inside Path -->
+          <div class="preview-row" title="Folder and file path inside the downloaded ZIP">
+            <span class="preview-row-label">📄 Inside:</span>
+            <span class="path-code" id="previewInsidePath">PDF_Increased/PDF1_Increased.pdf</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT PANEL: DROPZONE, ACTION BAR & PROGRESS -->
+      <section class="panel-card" aria-label="Upload and Download">
+        <div class="section-block" style="flex: 1;">
+          <div class="section-header">
+            <span>4. Upload PDFs or ZIP Archives</span>
+            <button type="button" id="sampleBtn" class="preset-chip" style="padding: 3px 10px;">+ Load Sample PDF</button>
+          </div>
+
+          <!-- Dashed Dropzone -->
+          <div class="dropzone-area" id="dropzone" tabindex="0" role="button" aria-label="Upload PDF or ZIP files">
+            <input type="file" id="fileInput" multiple accept=".pdf,.zip,application/pdf,application/zip" />
+            <div class="upload-circle">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+            </div>
+            <div class="dropzone-heading"><span class="txt-desktop">Click to Choose Files or Drag &amp; Drop Here</span><span class="txt-touch">Tap to Choose Files</span></div>
+            <div class="dropzone-desc">Upload one or more PDF files, or a ZIP archive containing PDFs</div>
+            <div class="file-status-pill" id="queuePill">No files selected (Previewing: PDF1.pdf)</div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="button-bar">
+            <button type="button" id="processBtn" class="btn btn-primary-green" disabled>
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span>Resize &amp; Download ZIP</span>
+            </button>
+
+            <button type="button" id="redownloadBtn" class="btn btn-secondary" disabled>
+              Download Again
+            </button>
+
+            <button type="button" id="clearBtn" class="btn btn-secondary" disabled>
+              Clear
+            </button>
+          </div>
+        </div>
+
+        <!-- Progress Strip -->
+        <div class="progress-card">
+          <div class="progress-top">
+            <span id="statusText">Ready — Upload a PDF or ZIP to start</span>
+            <span id="percentText">0%</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progressBar"></div>
+          </div>
+          <div class="metrics-row">
+            <span>Files: <strong id="metricFiles">0 / 0</strong></span>
+            <span>Original: <strong id="metricOrig">0 KB</strong></span>
+            <span>New Size: <strong id="metricNew">0 KB</strong></span>
+            <span>Time: <strong id="metricTime">0.0s</strong></span>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ========================================================================
+         3. BOTTOM AREA: HIDDEN TECHNICAL SETTINGS/LOGS & BRIEF ARCHIVE NOTE
+         ======================================================================== -->
+    <footer class="bottom-area">
+
+      <!-- Technical Stuff & Activity Log Kept Hidden by Default -->
+      <details class="tech-drawer">
+        <summary>Technical Settings &amp; File Activity Log (Optional)</summary>
+        <div class="drawer-body">
+          <div class="tech-grid">
+            <div>
+              <label class="input-label-small" for="batchSizeSelect">Batch Processing Speed</label>
+              <select id="batchSizeSelect" class="select-input" style="padding: 7px 10px; font-size: 0.84rem;">
+                <option value="5">5 files per batch</option>
+                <option value="10" selected>10 files per batch (Default)</option>
+                <option value="25">25 files per batch</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="input-label-small" for="metadataSelect">Decrease Mode Cleanup</label>
+              <select id="metadataSelect" class="select-input" style="padding: 7px 10px; font-size: 0.84rem;">
+                <option value="strip_all" selected>Clear Metadata &amp; Compress</option>
+                <option value="keep_title">Keep Title/Author &amp; Compress</option>
+              </select>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <label class="check-label">
+                <input type="checkbox" id="includeNonPdfCheck" />
+                Keep non-PDF files from uploaded ZIPs
+              </label>
+              <label class="check-label">
+                <input type="checkbox" id="autoDownloadCheck" checked />
+                Auto-download ZIP when complete
+              </label>
+            </div>
+
+            <div style="text-align: right;">
+              <button type="button" id="resetDefaultsBtn" class="preset-chip">Reset All Settings to Default</button>
+            </div>
+          </div>
+
+          <div class="tech-section-title">Advanced Options</div>
+          <div class="tech-grid">
+            <div><label class="input-label-small" for="sortSelect">Processing Order</label><select id="sortSelect" class="select-input"><option value="upload" selected>Upload order</option><option value="natural">Name A→Z (PDF2 before PDF10)</option><option value="small">Smallest first</option><option value="large">Largest first</option></select></div>
+            <div><label class="input-label-small" for="folderSelect">Folder Inside ZIP</label><select id="folderSelect" class="select-input"><option value="shared" selected>One shared folder</option><option value="flat">No folder (PDFs at ZIP root)</option></select></div>
+            <div><label class="input-label-small" for="suffixSelect">File Name Suffix</label><select id="suffixSelect" class="select-input"><option value="title" selected>_Increased / _Decreased</option><option value="lower">_increased / _decreased</option><option value="resized">_Resized</option><option value="none">No suffix</option></select></div>
+            <div><label class="input-label-small" for="padSelect">Custom Name Numbering</label><select id="padSelect" class="select-input"><option value="0" selected>NewPDF1, NewPDF2…</option><option value="2">NewPDF01, NewPDF02…</option><option value="3">NewPDF001, NewPDF002…</option></select></div>
+            <div class="tech-checks">
+              <label class="check-label"><input type="checkbox" id="verifyCheck" checked /> Verify every output re-opens</label>
+              <label class="check-label"><input type="checkbox" id="skipDupCheck" checked /> Skip duplicate uploads</label>
+              <label class="check-label"><input type="checkbox" id="reportCheck" /> Add ScaleDock_Report.csv to ZIP</label>
+            </div>
+          </div>
+          <div class="tech-actions">
+            <button type="button" id="selfTestBtn" class="preset-chip">Run Self-Test</button>
+            <button type="button" id="saveLogBtn" class="preset-chip">Download Log</button>
+            <button type="button" id="clearLogBtn" class="preset-chip">Clear Log</button>
+          </div>
+
+          <div>
+            <div class="input-label-small">Detailed File Log</div>
+            <div class="log-terminal" id="logBox" role="log" aria-live="polite"></div>
+          </div>
+        </div>
+      </details>
+
+      <!-- Small, Precise Website & Archive.org Description -->
+      <div class="footer-note">
+        <div>
+          <strong>ScaleDock:</strong> Instant client-side bulk PDF resizer. <strong>Archive.org Compatible:</strong> Archive.org rejects tiny KB files, so ScaleDock defaults to <strong>2 MB</strong> in Increase Mode to make small PDFs immediately upload-ready.
+        </div>
+        <div>
+          <em>Note: Increased files use a safe embedded stream (~180B overhead, landing right near target). Decreased files are only replaced when the compressed result is smaller.</em>
+        </div>
+      </div>
+
+      <!-- Credit -->
+      <div class="credit-line">Developed by <strong>Rizwan</strong> for the team</div>
+
+    </footer>
+
+  </div>
+
+  <!-- ==========================================================================
+       4. APPLICATION JAVASCRIPT
+       ========================================================================== -->
+  <script>
+    (function () {
+      'use strict';
+
+      const STORAGE_KEY = 'scaledock_settings_v2';
+      const STREAM_OVERHEAD_BYTES = 180;
+
+      const DEFAULT_SETTINGS = {
+        mode: 'increase',          // 'increase' | 'decrease'
+        targetValue: 2,            // 2 MB default
+        targetUnit: 'MB',          // 'MB' | 'KB'
+        customZipName: '',         // Optional custom ZIP archive name
+        customPdfName: '',         // Optional custom PDF filename prefix (e.g. NewPDF -> NewPDF1.pdf)
+        batchSize: 10,
+        metadataPolicy: 'strip_all',
+        includeNonPdf: false,
+        autoDownload: true,
+        sortOrder: 'upload',
+        folderMode: 'shared',
+        suffixStyle: 'title',
+        numberPad: '0',
+        verifyOutput: true,
+        skipDuplicates: true,
+        includeReport: false
+      };
+
+      let state = {
+        settings: { ...DEFAULT_SETTINGS },
+        queuedFiles: [],
+        lastZipBlob: null,
+        lastZipName: '',
+        isBusy: false,
+        cancel: false,
+        logLines: []
+      };
+
+      const el = {
+        modeIncreaseBtn: document.getElementById('modeIncreaseBtn'),
+        modeDecreaseBtn: document.getElementById('modeDecreaseBtn'),
+        targetValueInput: document.getElementById('targetValueInput'),
+        targetUnitSelect: document.getElementById('targetUnitSelect'),
+        presetChips: document.querySelectorAll('.preset-row .preset-chip'),
+        savedIndicator: document.getElementById('savedIndicator'),
+
+        customZipInput: document.getElementById('customZipInput'),
+        customPdfInput: document.getElementById('customPdfInput'),
+
+        previewModeNote: document.getElementById('previewModeNote'),
+        previewOldPdf: document.getElementById('previewOldPdf'),
+        previewNewPdf: document.getElementById('previewNewPdf'),
+        previewOldSource: document.getElementById('previewOldSource'),
+        previewZipFile: document.getElementById('previewZipFile'),
+        previewInsidePath: document.getElementById('previewInsidePath'),
+
+        dropzone: document.getElementById('dropzone'),
+        fileInput: document.getElementById('fileInput'),
+        queuePill: document.getElementById('queuePill'),
+        sampleBtn: document.getElementById('sampleBtn'),
+        processBtn: document.getElementById('processBtn'),
+        redownloadBtn: document.getElementById('redownloadBtn'),
+        clearBtn: document.getElementById('clearBtn'),
+
+        statusText: document.getElementById('statusText'),
+        percentText: document.getElementById('percentText'),
+        progressBar: document.getElementById('progressBar'),
+        metricFiles: document.getElementById('metricFiles'),
+        metricOrig: document.getElementById('metricOrig'),
+        metricNew: document.getElementById('metricNew'),
+        metricTime: document.getElementById('metricTime'),
+
+        batchSizeSelect: document.getElementById('batchSizeSelect'),
+        metadataSelect: document.getElementById('metadataSelect'),
+        includeNonPdfCheck: document.getElementById('includeNonPdfCheck'),
+        autoDownloadCheck: document.getElementById('autoDownloadCheck'),
+        resetDefaultsBtn: document.getElementById('resetDefaultsBtn'),
+        logBox: document.getElementById('logBox')
+      };
+      ['sortSelect','folderSelect','suffixSelect','padSelect','verifyCheck','skipDupCheck','reportCheck','selfTestBtn','saveLogBtn','clearLogBtn']
+        .forEach(id => { el[id] = document.getElementById(id); });
+
+      /* ------------------------------------------------------------------------
+         UTILITY FUNCTIONS
+         ------------------------------------------------------------------------ */
+      function formatSize(bytes) {
+        if (!Number.isFinite(bytes) || bytes < 0) return '0 B';
+        if (bytes < 1024) return `${bytes} B`;
+        const kb = bytes / 1024;
+        if (kb < 1024) return `${kb.toFixed(1)} KB`;
+        return `${(kb / 1024).toFixed(2)} MB`;
+      }
+
+      function getTargetBytes() {
+        const val = parseFloat(state.settings.targetValue);
+        const safeVal = Number.isFinite(val) && val > 0 ? val : 2;
+        return state.settings.targetUnit === 'KB'
+          ? Math.round(safeVal * 1024)
+          : Math.round(safeVal * 1024 * 1024);
+      }
+
+      function cleanName(str, fallback = '') {
+        const cleaned = String(str || '').replace(/[<>:"/\\|?*\x00-\x1F]/g, '_').trim();
+        return cleaned.length > 0 ? cleaned : fallback;
+      }
+
+      function stripExt(filename) {
+        const idx = filename.lastIndexOf('.');
+        return idx > 0 ? filename.slice(0, idx) : filename;
+      }
+
+      function isSystemJunk(path) {
+        const norm = path.replace(/\\/g, '/');
+        if (norm.includes('__MACOSX/')) return true;
+        const base = norm.split('/').pop() || '';
+        return base === '.DS_Store' || base === 'Thumbs.db' || base.startsWith('._');
+      }
+
+      function esc(t) {
+        return String(t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+      }
+
+      function writeLog(type, tag, msg) {
+        const row = document.createElement('div');
+        row.className = 'log-item';
+        row.innerHTML = `<span class="${esc(type)}">[${esc(tag)}]</span> ${esc(msg)}`;
+        el.logBox.appendChild(row);
+        while (el.logBox.childNodes.length > 1500) el.logBox.removeChild(el.logBox.firstChild);
+        el.logBox.scrollTop = el.logBox.scrollHeight;
+        state.logLines.push(`${new Date().toISOString()} [${tag}] ${msg}`);
+        if (state.logLines.length > 5000) state.logLines.shift();
+      }
+
+      async function ensureLibs() {
+        const t0 = Date.now();
+        const ready = () => typeof JSZip !== 'undefined' && typeof PDFLib !== 'undefined';
+        while (!ready() && Date.now() - t0 < 10000) await new Promise(r => setTimeout(r, 150));
+        if (!ready()) throw new Error('The PDF/ZIP engines could not load. Check the connection, or allow cdnjs.cloudflare.com / cdn.jsdelivr.net.');
+      }
+
+      function setProgress(p, text) {
+        el.percentText.textContent = `${p}%`;
+        el.progressBar.style.width = `${p}%`;
+        if (text) el.statusText.textContent = text;
+      }
+
+      /* ------------------------------------------------------------------------
+         PERSISTENT SETTINGS (localStorage + Cookie Fallback)
+         ------------------------------------------------------------------------ */
+      function loadSettings() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (raw) {
+            state.settings = { ...DEFAULT_SETTINGS, ...JSON.parse(raw) };
+            return;
+          }
+        } catch (_) {}
+        const match = document.cookie.match(new RegExp('(^| )' + STORAGE_KEY + '=([^;]+)'));
+        if (match) {
+          try {
+            state.settings = { ...DEFAULT_SETTINGS, ...JSON.parse(decodeURIComponent(match[2])) };
+          } catch (_) {}
+        }
+      }
+
+      function saveSettings() {
+        const payload = JSON.stringify(state.settings);
+        try { localStorage.setItem(STORAGE_KEY, payload); } catch (_) {}
+        try {
+          document.cookie = `${STORAGE_KEY}=${encodeURIComponent(payload)}; path=/; max-age=31536000; SameSite=Lax`;
+        } catch (_) {}
+        el.savedIndicator.textContent = 'Saved automatically ✓';
+      }
+
+      /* ------------------------------------------------------------------------
+         NAMING & LIVE PREVIEW ENGINE
+         - Shows `<Old Name> -> <New Name>` both when untouched and when modified.
+         - Shows `📄 Inside: <Folder>/<File>.pdf` (e.g. `PDF_Increased/NewPDF1.pdf`).
+         ------------------------------------------------------------------------ */
+      function getSuffix() {
+        const inc = state.settings.mode === 'increase';
+        switch (state.settings.suffixStyle) {
+          case 'lower': return inc ? '_increased' : '_decreased';
+          case 'resized': return '_Resized';
+          case 'none': return '';
+          default: return inc ? '_Increased' : '_Decreased';
+        }
+      }
+
+      function trimSeriesNumber(stem) {
+        const trimmed = stem.replace(/[\s_\-.]*\(?\d+\)?$/, '').replace(/[\s_\-.]+$/, '');
+        return trimmed || stem;
+      }
+
+      // first1 … first10 -> "first"; report_jan + report_feb -> "report"; otherwise the first PDF's name
+      function commonBaseName(stems) {
+        if (stems.length === 0) return '';
+        if (stems.length === 1) return trimSeriesNumber(stems[0]);
+
+        const trimmed = stems.map(trimSeriesNumber);
+        const first = trimmed[0];
+        const lower = trimmed.map(t => t.toLowerCase());
+
+        if (lower.every(t => t === lower[0])) return first;
+
+        let len = 0;
+        while (len < lower[0].length && lower.every(t => t[len] === lower[0][len])) len++;
+        let prefix = first.slice(0, len);
+
+        const isSep = ch => /[\s_\-.]/.test(ch);
+        const endsOnWord = lower.every(t => t.length === len || isSep(t[len]));
+        if (!endsOnWord) {
+          const cut = prefix.search(/[\s_\-.][^\s_\-.]*$/);
+          prefix = cut > 0 ? prefix.slice(0, cut) : '';
+        }
+        prefix = prefix.replace(/[\s_\-.(]+$/, '');
+        return prefix.length >= 3 ? prefix : first;
+      }
+
+      // One shared folder / ZIP name for the whole batch, never numbered: <common name>_increased
+      function getRootFolderName() {
+        const suffix = getSuffix();
+        const stems = state.queuedFiles.length
+          ? state.queuedFiles.map(f => stripExt(f.name))
+          : ['PDF1'];
+        const base = commonBaseName(stems) || 'PDF';
+        return `${cleanName(base, 'PDF')}${suffix}`;
+      }
+
+      function buildFileNaming(relPath, sequenceNumber) {
+        const suffix = getSuffix();
+        const parts = relPath.replace(/\\/g, '/').split('/').filter(Boolean);
+        const originalFile = parts.pop() || 'PDF1.pdf';
+        const originalStem = cleanName(stripExt(originalFile), 'PDF1');
+        const rootFolder = getRootFolderName();
+
+        // PDF File Name: either `<customPdfName><seq>.pdf` (PDF1 -> NewPDF1) or `<originalStem>_Increased.pdf`
+        const customPdfStem = cleanName(state.settings.customPdfName.replace(/\.pdf$/i, ''), '');
+        const newPdfFileName = customPdfStem
+          ? `${customPdfStem}${String(sequenceNumber).padStart(Number(state.settings.numberPad) || 0, '0')}.pdf`
+          : `${originalStem}${suffix}.pdf`;
+
+        // Keep sub-folders from uploaded ZIPs, but avoid repeating the root folder name
+        const subFolders = parts.map(p => `${cleanName(p, 'Folder')}${suffix}`);
+        if (subFolders[0] && subFolders[0].toLowerCase() === rootFolder.toLowerCase()) subFolders.shift();
+
+        return {
+          originalFileName: originalFile,
+          rootFolder,
+          newPdfFileName,
+          insideZipPath: state.settings.folderMode === 'flat' ? newPdfFileName : [rootFolder, ...subFolders, newPdfFileName].join('/')
+        };
+      }
+
+      function resolveOutputZipName() {
+        const customZip = cleanName(state.settings.customZipName.replace(/\.zip$/i, ''), '');
+        return `${customZip || getRootFolderName()}.zip`;
+      }
+
+      function syncUI() {
+        const s = state.settings;
+
+        el.modeIncreaseBtn.classList.toggle('active', s.mode === 'increase');
+        el.modeDecreaseBtn.classList.toggle('active', s.mode === 'decrease');
+        el.targetValueInput.value = s.targetValue;
+        el.targetUnitSelect.value = s.targetUnit;
+        el.customZipInput.value = s.customZipName;
+        el.customPdfInput.value = s.customPdfName;
+        el.batchSizeSelect.value = String(s.batchSize);
+        el.metadataSelect.value = s.metadataPolicy;
+        el.includeNonPdfCheck.checked = Boolean(s.includeNonPdf);
+        el.autoDownloadCheck.checked = Boolean(s.autoDownload);
+        el.sortSelect.value = s.sortOrder;
+        el.folderSelect.value = s.folderMode;
+        el.suffixSelect.value = s.suffixStyle;
+        el.padSelect.value = String(s.numberPad);
+        el.verifyCheck.checked = Boolean(s.verifyOutput);
+        el.skipDupCheck.checked = Boolean(s.skipDuplicates);
+        el.reportCheck.checked = Boolean(s.includeReport);
+
+        el.customZipInput.placeholder = `Auto: ${getRootFolderName()}`;
+
+        el.presetChips.forEach(chip => {
+          const match = parseFloat(chip.dataset.val) === parseFloat(s.targetValue) && chip.dataset.unit === s.targetUnit;
+          chip.classList.toggle('active', match);
+        });
+
+        // Determine sample or actual queued file name for the live preview
+        const firstQueuedName = state.queuedFiles.length > 0
+          ? state.queuedFiles[0].name
+          : 'PDF1.pdf';
+
+        const samplePdfName = firstQueuedName.toLowerCase().endsWith('.zip')
+          ? `${stripExt(firstQueuedName)}.pdf`
+          : firstQueuedName;
+
+        const preview = buildFileNaming(samplePdfName, 1);
+        const zipName = resolveOutputZipName();
+
+        const hasCustom = Boolean(cleanName(s.customZipName) || cleanName(s.customPdfName));
+        el.previewModeNote.textContent = hasCustom ? 'Custom Naming Active' : 'Default Automatic Naming';
+
+        el.previewOldPdf.textContent = preview.originalFileName;
+        el.previewNewPdf.textContent = preview.newPdfFileName;
+        el.previewOldSource.textContent = state.queuedFiles.length > 1 ? `${state.queuedFiles.length} files` : firstQueuedName;
+        el.previewZipFile.textContent = zipName;
+        el.previewInsidePath.textContent = preview.insideZipPath;
+        el.previewNewPdf.title = preview.newPdfFileName;
+        el.previewZipFile.title = zipName;
+        el.previewInsidePath.title = preview.insideZipPath;
+      }
+
+      /* ------------------------------------------------------------------------
+         PDF RESIZING CORE (INCREASE & DECREASE)
+         ------------------------------------------------------------------------ */
+      function generateRandomBytes(length) {
+        const buf = new Uint8Array(length);
+        const CHUNK = 65536;
+        if (window.crypto && window.crypto.getRandomValues) {
+          for (let i = 0; i < length; i += CHUNK) {
+            window.crypto.getRandomValues(buf.subarray(i, Math.min(i + CHUNK, length)));
+          }
+        } else {
+          for (let i = 0; i < length; i++) buf[i] = (Math.random() * 256) | 0;
+        }
+        return buf;
+      }
+
+      async function increasePdfToTarget(originalBytes, targetBytes) {
+        if (originalBytes.byteLength >= targetBytes) {
+          return { bytes: originalBytes, tag: 'SKIPPED (Already >= target)' };
+        }
+
+        const pdfDoc = await PDFLib.PDFDocument.load(originalBytes, {
+          ignoreEncryption: true,
+          updateMetadata: false
+        });
+
+        const baseBytes = await pdfDoc.save({ useObjectStreams: false });
+        if (baseBytes.byteLength >= targetBytes) {
+          return { bytes: baseBytes, tag: 'INCREASED' };
+        }
+
+        const padLength = Math.max(16, targetBytes - baseBytes.byteLength - STREAM_OVERHEAD_BYTES);
+        const padData = generateRandomBytes(padLength);
+
+        const stream = pdfDoc.context.stream(padData, {
+          Type: 'EmbeddedFile',
+          Subtype: 'application/octet-stream',
+          Length: padData.byteLength
+        });
+        const ref = pdfDoc.context.register(stream);
+        pdfDoc.catalog.set(PDFLib.PDFName.of('ScaleDock_Ballast'), ref);
+
+        const outBytes = await pdfDoc.save({ useObjectStreams: false });
+        return { bytes: outBytes, tag: 'INCREASED' };
+      }
+
+      async function decreasePdfSize(originalBytes, policy) {
+        const pdfDoc = await PDFLib.PDFDocument.load(originalBytes, {
+          ignoreEncryption: true,
+          updateMetadata: false
+        });
+
+        if (policy === 'strip_all') {
+          pdfDoc.setTitle('');
+          pdfDoc.setAuthor('');
+          pdfDoc.setSubject('');
+          pdfDoc.setKeywords([]);
+          pdfDoc.setProducer('');
+          pdfDoc.setCreator('');
+          pdfDoc.catalog.delete(PDFLib.PDFName.of('Metadata'));
+          pdfDoc.catalog.delete(PDFLib.PDFName.of('PieceInfo'));
+        }
+        for (const key of ['ScaleDock_Ballast', 'VaultWeight_EmbeddedStream']) {
+          const name = PDFLib.PDFName.of(key);
+          const ref = pdfDoc.catalog.get(name);
+          if (ref instanceof PDFLib.PDFRef) pdfDoc.context.delete(ref);
+          pdfDoc.catalog.delete(name);
+        }
+
+        const compressed = await pdfDoc.save({ useObjectStreams: true, addDefaultPage: false });
+        if (compressed.byteLength < originalBytes.byteLength) {
+          return { bytes: compressed, tag: 'DECREASED' };
+        }
+        return { bytes: originalBytes, tag: 'KEPT ORIGINAL (Already smaller)' };
+      }
+
+      /* ------------------------------------------------------------------------
+         FILE QUEUE & BATCH EXECUTION
+         ------------------------------------------------------------------------ */
+      function addFiles(fileList) {
+        if (!fileList || !fileList.length) return;
+        if (state.isBusy) { writeLog('warn', 'BUSY', 'Please wait until the current run finishes.'); return; }
+        const keyOf = f => `${f.name}|${f.size}|${f.lastModified}`;
+        const seen = new Set(state.queuedFiles.map(keyOf));
+        let count = 0, dups = 0;
+        Array.from(fileList).forEach(file => {
+          const lower = file.name.toLowerCase();
+          if (!(lower.endsWith('.pdf') || lower.endsWith('.zip') || file.type === 'application/pdf' || file.type.includes('zip'))) return;
+          if (state.settings.skipDuplicates && seen.has(keyOf(file))) { dups++; return; }
+          seen.add(keyOf(file));
+          state.queuedFiles.push(file);
+          count++;
+        });
+        updateQueueUI();
+        syncUI();
+        if (count > 0) writeLog('info', 'QUEUED', `Added ${count} file(s) to queue.`);
+        if (dups > 0) writeLog('info', 'SKIPPED', `${dups} duplicate file(s) ignored.`);
+      }
+
+      function updateQueueUI() {
+        const total = state.queuedFiles.length;
+        if (total === 0) {
+          el.queuePill.textContent = 'No files selected (Previewing: PDF1.pdf)';
+          el.queuePill.classList.remove('ready');
+        } else {
+          const sumBytes = state.queuedFiles.reduce((acc, f) => acc + (f.size || 0), 0);
+          el.queuePill.textContent = `${total} file(s) ready (${formatSize(sumBytes)}) — First: ${state.queuedFiles[0].name}`;
+          el.queuePill.classList.add('ready');
+        }
+        el.queuePill.title = el.queuePill.textContent;
+        el.processBtn.disabled = total === 0 || state.isBusy;
+        el.clearBtn.disabled = !state.isBusy && total === 0;
+      }
+
+      async function unpackQueuedFiles() {
+        const list = [];
+        for (const f of state.queuedFiles) {
+          if (f.name.toLowerCase().endsWith('.zip') || f.type.includes('zip')) {
+            try {
+              const zip = await JSZip.loadAsync(await f.arrayBuffer());
+              for (const entryPath of Object.keys(zip.files)) {
+                const entry = zip.files[entryPath];
+                if (entry.dir || isSystemJunk(entryPath)) continue;
+                if (entryPath.toLowerCase().endsWith('.pdf')) {
+                  list.push({ relPath: entryPath, bytes: await entry.async('uint8array'), isPdf: true });
+                } else if (state.settings.includeNonPdf) {
+                  list.push({ relPath: entryPath, bytes: await entry.async('uint8array'), isPdf: false });
+                }
+              }
+            } catch (err) {
+              writeLog('warn', 'ZIP-ERR', `Could not read "${f.name}": ${err.message}`);
+            }
+          } else {
+            list.push({ relPath: f.name, bytes: new Uint8Array(await f.arrayBuffer()), isPdf: true });
+          }
+        }
+        return list;
+      }
+
+      function setBusyUI(busy) {
+        document.body.classList.toggle('is-busy', busy);
+        if (!el.clearBtn.dataset.label) el.clearBtn.dataset.label = el.clearBtn.textContent.trim();
+        if (el.clearBtn.children.length === 0) el.clearBtn.textContent = busy ? 'Cancel' : el.clearBtn.dataset.label;
+        el.selfTestBtn.disabled = busy;
+      }
+
+      function sortItems(list) {
+        const mode = state.settings.sortOrder;
+        const col = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+        const base = p => p.split('/').pop();
+        if (mode === 'natural') list.sort((a, b) => col.compare(base(a.relPath), base(b.relPath)));
+        else if (mode === 'small') list.sort((a, b) => a.bytes.byteLength - b.bytes.byteLength);
+        else if (mode === 'large') list.sort((a, b) => b.bytes.byteLength - a.bytes.byteLength);
+      }
+
+      function csvCell(v) {
+        let t = String(v);
+        if (/^[=+\-@\t\r]/.test(t)) t = "'" + t;
+        return /[",\n\r]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t;
+      }
+
+      async function resizeOne(item, seq, targetBytes) {
+        const naming = buildFileNaming(item.relPath, seq);
+        const origLen = item.bytes.byteLength;
+        try {
+          const out = state.settings.mode === 'increase'
+            ? await increasePdfToTarget(item.bytes, targetBytes)
+            : await decreasePdfSize(item.bytes, state.settings.metadataPolicy);
+          if (state.settings.verifyOutput && out.bytes !== item.bytes) {
+            await PDFLib.PDFDocument.load(out.bytes, { ignoreEncryption: true, updateMetadata: false });
+          }
+          return { naming, bytes: out.bytes, origLen, newLen: out.bytes.byteLength, tag: out.tag, flagged: false };
+        } catch (err) {
+          return { naming, bytes: item.bytes, origLen, newLen: origLen, tag: 'FLAGGED (Unreadable — kept original)', flagged: true };
+        }
+      }
+
+      async function processAll() {
+        if (state.isBusy || state.queuedFiles.length === 0) return;
+        state.isBusy = true;
+        state.cancel = false;
+        setBusyUI(true);
+        updateQueueUI();
+        el.redownloadBtn.disabled = true;
+        const t0 = performance.now();
+
+        try {
+          await ensureLibs();
+          setProgress(4, 'Reading files...');
+          const workItems = await unpackQueuedFiles();
+          const pdfItems = workItems.filter(x => x.isPdf);
+          const extraItems = workItems.filter(x => !x.isPdf);
+
+          if (pdfItems.length === 0) {
+            setProgress(0, 'No PDF files found in your upload.');
+            writeLog('warn', 'EMPTY', 'No PDF files found.');
+            return;
+          }
+
+          sortItems(pdfItems);
+          const targetBytes = getTargetBytes();
+          if (state.settings.mode === 'increase' && pdfItems.length * targetBytes > 1.5 * 1024 ** 3) {
+            const msg = `This will create about ${formatSize(pdfItems.length * targetBytes)} of output and may exhaust your browser's memory. Continue?`;
+            if (!window.confirm(msg)) { setProgress(0, 'Cancelled — nothing was created.'); return; }
+          }
+
+          const batchSize = Math.max(1, parseInt(state.settings.batchSize, 10) || 10);
+          const outZip = new JSZip();
+          const used = new Set();
+          const rows = [['Original', 'Output Path', 'Original Bytes', 'New Bytes', 'Status']];
+          let processed = 0, origSum = 0, newSum = 0, flagged = 0;
+
+          for (let i = 0; i < pdfItems.length; i += batchSize) {
+            if (state.cancel) throw new Error('CANCELLED');
+            const batch = pdfItems.slice(i, i + batchSize);
+            el.statusText.textContent = `Resizing PDFs (${i + 1}–${i + batch.length} of ${pdfItems.length})...`;
+            const results = await Promise.all(batch.map((item, idx) => resizeOne(item, i + idx + 1, targetBytes)));
+
+            for (const res of results) {
+              processed++; origSum += res.origLen; newSum += res.newLen;
+              if (res.flagged) flagged++;
+              let path = res.naming.insideZipPath, dup = 1;
+              while (used.has(path.toLowerCase())) path = res.naming.insideZipPath.replace(/\.pdf$/i, `_${dup++}.pdf`);
+              used.add(path.toLowerCase());
+              outZip.file(path, res.bytes, { compression: 'STORE' });
+              rows.push([res.naming.originalFileName, path, res.origLen, res.newLen, res.tag]);
+              writeLog(res.flagged ? 'warn' : 'ok', res.tag,
+                `${res.naming.originalFileName} ➔ ${path} (${formatSize(res.origLen)} ➔ ${formatSize(res.newLen)})`);
+            }
+            batch.forEach(it => { it.bytes = null; });
+
+            setProgress(Math.min(92, Math.round((processed / pdfItems.length) * 84) + 8));
+            el.metricFiles.textContent = `${processed} / ${pdfItems.length}`;
+            el.metricOrig.textContent = formatSize(origSum);
+            el.metricNew.textContent = formatSize(newSum);
+            el.metricTime.textContent = `${((performance.now() - t0) / 1000).toFixed(2)}s`;
+            await new Promise(r => setTimeout(r, 8));
+          }
+
+          for (const extra of extraItems) outZip.file(extra.relPath, extra.bytes, { compression: 'STORE' });
+          if (state.settings.includeReport) {
+            outZip.file('ScaleDock_Report.csv', '\uFEFF' + rows.map(r => r.map(csvCell).join(',')).join('\r\n'));
+          }
+
+          el.statusText.textContent = 'Packaging ZIP...';
+          const zipBlob = await outZip.generateAsync({ type: 'blob', compression: 'STORE' },
+            meta => setProgress(92 + Math.round(meta.percent * 0.07)));
+          const finalZipName = resolveOutputZipName();
+          state.lastZipBlob = zipBlob;
+          state.lastZipName = finalZipName;
+
+          const totalSec = ((performance.now() - t0) / 1000).toFixed(2);
+          el.metricTime.textContent = `${totalSec}s`;
+          setProgress(100, `Complete! Prepared ${finalZipName} in ${totalSec}s` + (flagged ? ` — ${flagged} file(s) kept as original (unreadable)` : ''));
+          el.redownloadBtn.disabled = false;
+          if (state.settings.autoDownload) triggerDownload(zipBlob, finalZipName);
+        } catch (err) {
+          if (err && err.message === 'CANCELLED') {
+            setProgress(0, 'Cancelled — nothing was downloaded.');
+            writeLog('warn', 'CANCELLED', 'Run cancelled by user.');
+          } else {
+            setProgress(0, `Something went wrong: ${err && err.message ? err.message : err}`);
+            writeLog('warn', 'ERROR', String(err && err.message ? err.message : err));
+          }
+        } finally {
+          state.isBusy = false;
+          setBusyUI(false);
+          updateQueueUI();
+        }
+      }
+
+      async function runSelfTest() {
+        if (state.isBusy) return;
+        el.selfTestBtn.disabled = true;
+        const pass = m => writeLog('ok', 'TEST', m);
+        const fail = m => writeLog('warn', 'TEST-FAIL', m);
+        try {
+          await ensureLibs();
+          pass(`Engines loaded (JSZip ${JSZip.version}, pdf-lib).`);
+          const doc = await PDFLib.PDFDocument.create();
+          doc.addPage([300, 200]).drawText('Self-test', { x: 20, y: 100 });
+          const small = await doc.save({ useObjectStreams: false });
+          const target = 200 * 1024;
+          const up = await increasePdfToTarget(small, target);
+          const off = Math.abs(up.bytes.byteLength - target);
+          (off <= 2048 ? pass : fail)(`Increase: ${formatSize(small.byteLength)} ➔ ${formatSize(up.bytes.byteLength)} (off by ${off} B).`);
+          await PDFLib.PDFDocument.load(up.bytes, { ignoreEncryption: true, updateMetadata: false });
+          pass('Increased PDF re-opens correctly.');
+          const down = await decreasePdfSize(up.bytes, 'strip_all');
+          (down.bytes.byteLength < up.bytes.byteLength ? pass : fail)(`Decrease: ${formatSize(up.bytes.byteLength)} ➔ ${formatSize(down.bytes.byteLength)}.`);
+          const z = new JSZip();
+          z.file('t/test.pdf', up.bytes, { compression: 'STORE' });
+          const blob = await z.generateAsync({ type: 'blob' });
+          const back = await JSZip.loadAsync(await blob.arrayBuffer());
+          (back.file('t/test.pdf') ? pass : fail)('ZIP round-trip.');
+          let store = 'available';
+          try { localStorage.setItem('__sd', '1'); localStorage.removeItem('__sd'); } catch (_) { store = 'unavailable (settings will not persist)'; }
+          writeLog('info', 'TEST', `Browser storage: ${store}.`);
+          pass('Self-test finished.');
+        } catch (err) {
+          fail(String(err && err.message ? err.message : err));
+        } finally {
+          el.selfTestBtn.disabled = false;
+        }
+      }
+
+      function triggerDownload(blob, filename) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 60000);
+      }
+
+      async function loadSamplePdf() {
+        try { await ensureLibs(); await loadSamplePdfCore(); }
+        catch (err) { writeLog('warn', 'ERROR', String(err && err.message ? err.message : err)); }
+      }
+
+      async function loadSamplePdfCore() {
+        const doc = await PDFLib.PDFDocument.create();
+        const page = doc.addPage([600, 400]);
+        page.drawText('ScaleDock Sample PDF (Originally ~1 KB)', { x: 50, y: 220, size: 18 });
+        const bytes = await doc.save({ useObjectStreams: false });
+        const file = new File([bytes], 'PDF1.pdf', { type: 'application/pdf' });
+        addFiles([file]);
+      }
+
+      /* ------------------------------------------------------------------------
+         EVENT LISTENERS
+         ------------------------------------------------------------------------ */
+      function bindEvents() {
+        el.modeIncreaseBtn.addEventListener('click', () => {
+          state.settings.mode = 'increase';
+          saveSettings();
+          syncUI();
+        });
+
+        el.modeDecreaseBtn.addEventListener('click', () => {
+          state.settings.mode = 'decrease';
+          saveSettings();
+          syncUI();
+        });
+
+        el.targetValueInput.addEventListener('input', () => {
+          const val = parseFloat(el.targetValueInput.value);
+          if (Number.isFinite(val) && val > 0) {
+            state.settings.targetValue = val;
+            saveSettings();
+            syncUI();
+          }
+        });
+
+        el.targetUnitSelect.addEventListener('change', () => {
+          state.settings.targetUnit = el.targetUnitSelect.value;
+          saveSettings();
+          syncUI();
+        });
+
+        el.presetChips.forEach(chip => {
+          chip.addEventListener('click', () => {
+            state.settings.targetValue = parseFloat(chip.dataset.val);
+            state.settings.targetUnit = chip.dataset.unit;
+            saveSettings();
+            syncUI();
+          });
+        });
+
+        el.customZipInput.addEventListener('input', () => {
+          state.settings.customZipName = el.customZipInput.value;
+          saveSettings();
+          syncUI();
+        });
+
+        el.customPdfInput.addEventListener('input', () => {
+          state.settings.customPdfName = el.customPdfInput.value;
+          saveSettings();
+          syncUI();
+        });
+
+        el.batchSizeSelect.addEventListener('change', () => {
+          state.settings.batchSize = parseInt(el.batchSizeSelect.value, 10) || 10;
+          saveSettings();
+        });
+
+        el.metadataSelect.addEventListener('change', () => {
+          state.settings.metadataPolicy = el.metadataSelect.value;
+          saveSettings();
+        });
+
+        el.includeNonPdfCheck.addEventListener('change', () => {
+          state.settings.includeNonPdf = el.includeNonPdfCheck.checked;
+          saveSettings();
+        });
+
+        el.autoDownloadCheck.addEventListener('change', () => {
+          state.settings.autoDownload = el.autoDownloadCheck.checked;
+          saveSettings();
+        });
+
+        el.resetDefaultsBtn.addEventListener('click', () => {
+          state.settings = { ...DEFAULT_SETTINGS };
+          try { localStorage.removeItem(STORAGE_KEY); } catch (_) {}
+          saveSettings();
+          syncUI();
+        });
+
+        [['sortSelect', 'sortOrder'], ['folderSelect', 'folderMode'], ['suffixSelect', 'suffixStyle'], ['padSelect', 'numberPad']]
+          .forEach(([id, key]) => el[id].addEventListener('change', () => { state.settings[key] = el[id].value; saveSettings(); syncUI(); }));
+        [['verifyCheck', 'verifyOutput'], ['skipDupCheck', 'skipDuplicates'], ['reportCheck', 'includeReport']]
+          .forEach(([id, key]) => el[id].addEventListener('change', () => { state.settings[key] = el[id].checked; saveSettings(); }));
+        el.selfTestBtn.addEventListener('click', runSelfTest);
+        el.saveLogBtn.addEventListener('click', () => triggerDownload(new Blob([state.logLines.join('\n')], { type: 'text/plain' }), 'ScaleDock_Log.txt'));
+        el.clearLogBtn.addEventListener('click', () => { el.logBox.textContent = ''; state.logLines = []; });
+
+        // Keep the page from navigating away when a file misses the dropzone; warn before leaving mid-run
+        window.addEventListener('dragover', e => e.preventDefault());
+        window.addEventListener('drop', e => e.preventDefault());
+        window.addEventListener('beforeunload', e => { if (state.isBusy) { e.preventDefault(); e.returnValue = ''; } });
+
+        el.dropzone.addEventListener('click', () => el.fileInput.click());
+        el.dropzone.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            el.fileInput.click();
+          }
+        });
+
+        el.fileInput.addEventListener('change', e => {
+          addFiles(e.target.files);
+          el.fileInput.value = '';
+        });
+
+        ['dragenter', 'dragover'].forEach(evt => {
+          el.dropzone.addEventListener(evt, e => {
+            e.preventDefault();
+            el.dropzone.classList.add('drag-over');
+          });
+        });
+
+        ['dragleave', 'drop'].forEach(evt => {
+          el.dropzone.addEventListener(evt, e => {
+            e.preventDefault();
+            el.dropzone.classList.remove('drag-over');
+          });
+        });
+
+        el.dropzone.addEventListener('drop', e => {
+          if (e.dataTransfer && e.dataTransfer.files) {
+            addFiles(e.dataTransfer.files);
+          }
+        });
+
+        el.sampleBtn.addEventListener('click', loadSamplePdf);
+        el.processBtn.addEventListener('click', processAll);
+
+        el.redownloadBtn.addEventListener('click', () => {
+          if (state.lastZipBlob) {
+            triggerDownload(state.lastZipBlob, state.lastZipName);
+          }
+        });
+
+        el.clearBtn.addEventListener('click', () => {
+          if (state.isBusy) { state.cancel = true; el.statusText.textContent = 'Cancelling...'; return; }
+          state.queuedFiles = [];
+          el.progressBar.style.width = '0%';
+          el.percentText.textContent = '0%';
+          el.statusText.textContent = 'Ready — Upload a PDF or ZIP to start';
+          updateQueueUI();
+          syncUI();
+        });
+      }
+
+      loadSettings();
+      syncUI();
+      bindEvents();
+      writeLog('info', 'READY', 'ScaleDock ready. Default target: 2 MB.');
+      ensureLibs()
+        .then(() => writeLog('info', 'ENGINE', 'PDF & ZIP engines loaded.'))
+        .catch(err => { writeLog('warn', 'ENGINE', err.message); el.statusText.textContent = 'Engines failed to load — check your connection.'; });
+    })();
+  </script>
+</body>
+</html>
