@@ -1,3 +1,7 @@
+Claude
+
+
+Scaledock · HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,17 +11,17 @@
   <meta name="description" content="ScaleDock: private, in-browser bulk PDF resizer. Files never leave your device." />
   <meta name="theme-color" content="#1d63e8" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📄%3C/text%3E%3C/svg%3E" />
-
+ 
   <!-- Crisp, Comforting Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-
+ 
   <!-- Client-Side PDF & ZIP Engines -->
   <script>window.__sdFallback = function (el) { var s = document.createElement('script'); s.src = el.getAttribute('data-fallback'); document.head.appendChild(s); };</script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" integrity="sha512-XMVd28F1oH/O71fzwBnV7HucLxVwtxf26XV8P4wPk26EDxuGZ91N8bsOttmnomcCD3CS5ZMRL50H0GgOHvegtg==" crossorigin="anonymous" referrerpolicy="no-referrer" data-fallback="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js" onerror="__sdFallback(this)"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js" integrity="sha512-z8IYLHO8bTgFqj+yrPyIJnzBDf7DDhWwiEsk4sY+Oe6J2M+WQequeGS7qioI5vT6rXgVRb4K1UVQC5ER7MKzKQ==" crossorigin="anonymous" referrerpolicy="no-referrer" data-fallback="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js" onerror="__sdFallback(this)"></script>
-
+ 
   <style>
     /* ==========================================================================
        1. COOL BLUE PALETTE & CRISP TYPOGRAPHY
@@ -30,41 +34,41 @@
       --bg-highlight: #ebf4ff;
       --bg-dropzone: #f0f7ff;
       --bg-dropzone-active: #e0efff;
-
+ 
       --border-soft: #d9e4f2;
       --border-input: #b9c9df;
       --border-highlight: #b3d1fa;
       --border-focus: #2f7df6;
-
+ 
       --blue-main: #1d63e8;
       --blue-dark: #174ec2;
       --blue-tint: #eaf2ff;
-
+ 
       --cyan-main: #0891b2;
       --cyan-dark: #0e7490;
       --cyan-tint: #e6f9fd;
-
+ 
       --text-primary: #0a1b36;
       --text-secondary: #2a3f5f;
       --text-muted: #5a6f8d;
-
+ 
       --radius-sm: 10px;
       --radius-md: 14px;
       --radius-lg: 18px;
-
+ 
       --shadow-soft: 0 6px 24px -4px rgba(23, 78, 194, 0.10), 0 2px 6px -1px rgba(23, 78, 194, 0.06);
       --shadow-focus: 0 0 0 3px rgba(47, 125, 246, 0.2);
-
+ 
       --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       --font-mono: 'JetBrains Mono', Consolas, monospace;
     }
-
+ 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
-
+ 
     html, body {
       background-color: var(--bg-canvas);
       color: var(--text-primary);
@@ -75,7 +79,7 @@
       -moz-osx-font-smoothing: grayscale;
       text-rendering: optimizeLegibility;
     }
-
+ 
     .page-wrap {
       max-width: 1140px;
       margin: 0 auto;
@@ -84,7 +88,7 @@
       flex-direction: column;
       gap: 14px;
     }
-
+ 
     /* ==========================================================================
        2. TOP BAR (CLEAN & CALM)
        ========================================================================== */
@@ -100,13 +104,13 @@
       gap: 12px;
       box-shadow: var(--shadow-soft);
     }
-
+ 
     .brand-box {
       display: flex;
       align-items: center;
       gap: 12px;
     }
-
+ 
     .brand-icon {
       width: 40px;
       height: 40px;
@@ -119,7 +123,7 @@
       box-shadow: 0 4px 12px rgba(37, 99, 235, 0.22);
       flex-shrink: 0;
     }
-
+ 
     .brand-title {
       font-size: 1.3rem;
       font-weight: 800;
@@ -127,13 +131,13 @@
       letter-spacing: -0.02em;
       line-height: 1.2;
     }
-
+ 
     .brand-sub {
       font-size: 0.83rem;
       color: var(--text-muted);
       font-weight: 500;
     }
-
+ 
     .trust-pill {
       display: inline-flex;
       align-items: center;
@@ -146,14 +150,14 @@
       padding: 6px 13px;
       border-radius: 999px;
     }
-
+ 
     .trust-dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
       background: var(--cyan-main);
     }
-
+ 
     /* ==========================================================================
        3. MAIN WORKSPACE GRID (EVERYTHING ESSENTIAL ON ONE SCREEN)
        ========================================================================== */
@@ -163,13 +167,13 @@
       gap: 16px;
       align-items: stretch;
     }
-
+ 
     @media (max-width: 940px) {
       .workspace-grid {
         grid-template-columns: 1fr;
       }
     }
-
+ 
     .panel-card {
       background: var(--bg-surface);
       border: 1px solid var(--border-soft);
@@ -181,13 +185,13 @@
       justify-content: space-between;
       gap: 14px;
     }
-
+ 
     .section-block {
       display: flex;
       flex-direction: column;
       gap: 7px;
     }
-
+ 
     .section-header {
       display: flex;
       justify-content: space-between;
@@ -198,7 +202,7 @@
       text-transform: uppercase;
       letter-spacing: 0.03em;
     }
-
+ 
     .badge-saved {
       font-size: 0.72rem;
       font-weight: 600;
@@ -210,7 +214,7 @@
       text-transform: none;
       letter-spacing: 0;
     }
-
+ 
     /* Mode Switcher */
     .mode-group {
       display: grid;
@@ -221,7 +225,7 @@
       border-radius: var(--radius-md);
       border: 1px solid var(--border-soft);
     }
-
+ 
     .mode-button {
       appearance: none;
       border: 1.5px solid transparent;
@@ -236,7 +240,7 @@
       transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
       text-align: center;
     }
-
+ 
     .mode-button span {
       display: block;
       font-size: 0.72rem;
@@ -244,26 +248,26 @@
       margin-top: 1px;
       opacity: 0.85;
     }
-
+ 
     .mode-button:hover {
       color: var(--text-primary);
       background: rgba(255, 255, 255, 0.6);
     }
-
+ 
     .mode-button.active {
       background: var(--bg-surface);
       color: var(--blue-main);
       border-color: var(--border-focus);
       box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
     }
-
+ 
     /* Target Input & Presets */
     .target-input-grid {
       display: grid;
       grid-template-columns: 1fr 92px;
       gap: 8px;
     }
-
+ 
     .text-input,
     .select-input {
       width: 100%;
@@ -277,30 +281,30 @@
       font-family: var(--font-sans);
       transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
-
+ 
     .text-input::placeholder {
       color: #7f98bd;
       font-weight: 500;
     }
-
+ 
     .text-input:hover,
     .select-input:hover {
       border-color: #7f98bd;
     }
-
+ 
     .text-input:focus,
     .select-input:focus {
       outline: none;
       border-color: var(--border-focus);
       box-shadow: var(--shadow-focus);
     }
-
+ 
     .preset-row {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
     }
-
+ 
     .preset-chip {
       appearance: none;
       background: var(--bg-soft);
@@ -314,20 +318,20 @@
       cursor: pointer;
       transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
     }
-
+ 
     .preset-chip:hover {
       border-color: var(--border-focus);
       color: var(--blue-main);
       background: var(--blue-tint);
     }
-
+ 
     .preset-chip.active {
       background: var(--blue-tint);
       border-color: var(--border-focus);
       color: var(--blue-main);
       font-weight: 700;
     }
-
+ 
     /* ==========================================================================
        4. HIGHLIGHTED CUSTOM NAMING SECTION (UNHIDDEN & PROMINENT)
        ========================================================================== */
@@ -340,7 +344,7 @@
       flex-direction: column;
       gap: 10px;
     }
-
+ 
     .naming-card-header {
       display: flex;
       justify-content: space-between;
@@ -351,7 +355,7 @@
       text-transform: uppercase;
       letter-spacing: 0.03em;
     }
-
+ 
     .naming-card-header span.optional-pill {
       background: #dbeafe;
       color: #1e40af;
@@ -361,19 +365,19 @@
       font-weight: 700;
       text-transform: none;
     }
-
+ 
     .naming-inputs-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
     }
-
+ 
     @media (max-width: 520px) {
       .naming-inputs-grid {
         grid-template-columns: 1fr;
       }
     }
-
+ 
     .input-label-small {
       display: block;
       font-size: 0.74rem;
@@ -381,7 +385,7 @@
       color: var(--text-secondary);
       margin-bottom: 4px;
     }
-
+ 
     /* ==========================================================================
        5. CRISP LIVE FILE NAME PREVIEW BOX (NO WORD BREAK GLITCHES)
        Shows:
@@ -398,7 +402,7 @@
       flex-direction: column;
       gap: 8px;
     }
-
+ 
     .preview-title {
       font-size: 0.78rem;
       font-weight: 800;
@@ -407,13 +411,13 @@
       justify-content: space-between;
       align-items: center;
     }
-
+ 
     .preview-status-tag {
       font-size: 0.7rem;
       font-weight: 600;
       color: var(--text-muted);
     }
-
+ 
     .preview-row {
       display: flex;
       align-items: center;
@@ -426,14 +430,14 @@
       white-space: nowrap;
       scrollbar-width: thin;
     }
-
+ 
     .preview-row-label {
       font-size: 0.75rem;
       font-weight: 700;
       color: var(--text-muted);
       flex-shrink: 0;
     }
-
+ 
     .name-pill-old {
       font-family: var(--font-mono);
       font-size: 0.78rem;
@@ -444,15 +448,15 @@
       border-radius: 6px;
       flex-shrink: 0;
     }
-
+ 
     .arrow-icon {
       color: var(--blue-main);
       font-weight: 800;
       font-size: 0.9rem;
       flex-shrink: 0;
     }
-
-    .name-pill-new {
+ 
+    .name-pill-New {
       font-family: var(--font-mono);
       font-size: 0.78rem;
       font-weight: 600;
@@ -463,7 +467,7 @@
       border-radius: 6px;
       flex-shrink: 0;
     }
-
+ 
     .path-code {
       font-family: var(--font-mono);
       font-size: 0.78rem;
@@ -471,7 +475,7 @@
       color: var(--blue-main);
       flex-shrink: 0;
     }
-
+ 
     /* ==========================================================================
        6. RIGHT COLUMN: DROPZONE, GREEN ACTION BUTTON & LIVE PROGRESS
        ========================================================================== */
@@ -490,18 +494,18 @@
       min-height: 200px;
       user-select: none;
     }
-
+ 
     .dropzone-area:hover,
     .dropzone-area.drag-over {
       background: var(--bg-dropzone-active);
       border-color: var(--blue-main);
       box-shadow: 0 6px 20px rgba(37, 99, 235, 0.08);
     }
-
+ 
     .dropzone-area input[type="file"] {
       display: none;
     }
-
+ 
     .upload-circle {
       width: 50px;
       height: 50px;
@@ -515,20 +519,20 @@
       margin-bottom: 10px;
       box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
     }
-
+ 
     .dropzone-heading {
       font-size: 1.05rem;
       font-weight: 800;
       color: var(--text-primary);
       margin-bottom: 4px;
     }
-
+ 
     .dropzone-desc {
       font-size: 0.84rem;
       color: var(--text-muted);
       margin-bottom: 14px;
     }
-
+ 
     .file-status-pill {
       display: inline-flex;
       align-items: center;
@@ -542,20 +546,20 @@
       border: 1px solid var(--border-highlight);
       box-shadow: 0 2px 5px rgba(15, 23, 42, 0.03);
     }
-
+ 
     .file-status-pill.ready {
       background: var(--cyan-tint);
       color: #155e75;
       border-color: #67e8f9;
     }
-
+ 
     /* Action Buttons */
     .button-bar {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
     }
-
+ 
     .btn {
       appearance: none;
       border: 1.5px solid transparent;
@@ -571,25 +575,25 @@
       gap: 8px;
       transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
     }
-
+ 
     .btn:disabled {
       opacity: 0.48;
       cursor: not-allowed;
       box-shadow: none !important;
     }
-
+ 
     .btn-primary-green {
       flex: 1;
       background: var(--cyan-main);
       color: #ffffff;
       box-shadow: 0 4px 14px rgba(8, 145, 178, 0.25);
     }
-
+ 
     .btn-primary-green:hover:not(:disabled) {
       background: var(--cyan-dark);
       box-shadow: 0 6px 18px rgba(8, 145, 178, 0.32);
     }
-
+ 
     .btn-secondary {
       background: var(--bg-soft);
       color: var(--text-secondary);
@@ -597,13 +601,13 @@
       font-size: 0.85rem;
       padding: 11px 15px;
     }
-
+ 
     .btn-secondary:hover:not(:disabled) {
       background: var(--bg-surface);
       border-color: var(--text-muted);
       color: var(--text-primary);
     }
-
+ 
     /* Progress & Metrics Card */
     .progress-card {
       background: var(--bg-soft);
@@ -614,7 +618,7 @@
       flex-direction: column;
       gap: 9px;
     }
-
+ 
     .progress-top {
       display: flex;
       justify-content: space-between;
@@ -623,7 +627,7 @@
       font-weight: 700;
       color: var(--text-secondary);
     }
-
+ 
     .progress-track {
       width: 100%;
       height: 9px;
@@ -631,7 +635,7 @@
       border-radius: 999px;
       overflow: hidden;
     }
-
+ 
     .progress-fill {
       height: 100%;
       width: 0%;
@@ -639,7 +643,7 @@
       border-radius: 999px;
       transition: width 0.18s ease;
     }
-
+ 
     .metrics-row {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -649,19 +653,19 @@
       font-size: 0.77rem;
       color: var(--text-muted);
     }
-
+ 
     @media (max-width: 520px) {
       .metrics-row {
         grid-template-columns: 1fr 1fr;
       }
     }
-
+ 
     .metrics-row strong {
       color: var(--text-primary);
       font-family: var(--font-mono);
       font-weight: 600;
     }
-
+ 
     /* ==========================================================================
        7. HIDDEN TECHNICAL DRAWER & CONCISE FOOTER
        ========================================================================== */
@@ -670,7 +674,7 @@
       flex-direction: column;
       gap: 10px;
     }
-
+ 
     details.tech-drawer {
       background: var(--bg-surface);
       border: 1px solid var(--border-soft);
@@ -678,7 +682,7 @@
       padding: 11px 18px;
       box-shadow: var(--shadow-soft);
     }
-
+ 
     details.tech-drawer summary {
       font-size: 0.83rem;
       font-weight: 700;
@@ -690,22 +694,22 @@
       align-items: center;
       list-style: none;
     }
-
+ 
     details.tech-drawer summary::-webkit-details-marker {
       display: none;
     }
-
+ 
     details.tech-drawer summary::after {
       content: 'Show Technical Options & Log ▾';
       font-size: 0.75rem;
       font-weight: 600;
       color: var(--blue-main);
     }
-
+ 
     details.tech-drawer[open] summary::after {
       content: 'Hide ▴';
     }
-
+ 
     .drawer-body {
       margin-top: 12px;
       padding-top: 12px;
@@ -714,14 +718,14 @@
       flex-direction: column;
       gap: 12px;
     }
-
+ 
     .tech-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 12px;
       align-items: end;
     }
-
+ 
     .check-label {
       display: inline-flex;
       align-items: center;
@@ -731,13 +735,13 @@
       color: var(--text-secondary);
       cursor: pointer;
     }
-
+ 
     .check-label input {
       width: 16px;
       height: 16px;
       accent-color: var(--blue-main);
     }
-
+ 
     .log-terminal {
       background: #0b1a33;
       color: #edf3fb;
@@ -749,15 +753,15 @@
       overflow-y: auto;
       line-height: 1.6;
     }
-
+ 
     .log-item {
       margin-bottom: 2px;
     }
-
+ 
     .log-item .ok { color: #5eead4; font-weight: 600; }
     .log-item .warn { color: #fbbf24; font-weight: 600; }
     .log-item .info { color: #60a5fa; font-weight: 600; }
-
+ 
     .footer-note {
       background: var(--bg-surface);
       border: 1px solid var(--border-soft);
@@ -771,11 +775,11 @@
       align-items: center;
       gap: 8px;
     }
-
+ 
     .footer-note strong {
       color: var(--text-secondary);
     }
-
+ 
     /* ==========================================================================
        8. COOL BLUE POLISH & BALANCE OVERRIDES
        ========================================================================== */
@@ -787,33 +791,33 @@
         linear-gradient(180deg, #eef4fc 0%, #e4edf9 100%);
       background-attachment: fixed;
     }
-
+ 
     .brand-icon {
       background: linear-gradient(135deg, #38bdf8 0%, #1d63e8 100%);
       box-shadow: 0 6px 16px rgba(29, 99, 232, 0.28);
     }
-
+ 
     /* Even columns, even spacing */
     .workspace-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); gap: 18px; }
     @media (max-width: 940px) { .workspace-grid { grid-template-columns: 1fr; } }
     .panel-card { padding: 22px; gap: 16px; }
     .section-header { min-height: 28px; }
-
+ 
     /* Left panel: aligned inputs, evenly spread presets */
     .naming-inputs-grid { align-items: start; }
     .input-label-small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .preset-row .preset-chip { flex: 1 1 auto; text-align: center; }
-
+ 
     /* Preview rows: shared label column, clean ellipsis instead of scrollbars */
     .preview-row { overflow: hidden; }
     .preview-row-label { min-width: 74px; }
-    .name-pill-old, .name-pill-new, .path-code {
+    .name-pill-old, .name-pill-New, .path-code {
       flex-shrink: 1;
       min-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;
     }
-
+ 
     /* Right panel: dropzone fills the space, buttons sit right under it */
     .dropzone-area { flex: 1 1 auto; min-height: 220px; }
     .file-status-pill {
@@ -825,7 +829,7 @@
     }
     .button-bar .btn { min-height: 48px; }
     .btn-secondary { font-size: 0.9rem; padding: 11px 18px; }
-
+ 
     .btn-primary-green {
       background: linear-gradient(135deg, #1d63e8 0%, #0891b2 100%);
       box-shadow: 0 8px 20px -4px rgba(29, 99, 232, 0.38);
@@ -834,7 +838,7 @@
       background: linear-gradient(135deg, #174ec2 0%, #0e7490 100%);
       box-shadow: 0 10px 24px -4px rgba(29, 99, 232, 0.46);
     }
-
+ 
     /* Footer: two even columns + small credit */
     .footer-note { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
     @media (max-width: 760px) { .footer-note { grid-template-columns: 1fr; } }
@@ -845,7 +849,7 @@
       padding: 2px 0 4px;
     }
     .credit-line strong { color: var(--blue-main); font-weight: 700; }
-
+ 
     /* ==========================================================================
        9. MOBILE & TOUCH FRIENDLY
        ========================================================================== */
@@ -862,24 +866,24 @@
     .log-terminal, .footer-note { overflow-wrap: anywhere; }
     .txt-touch { display: none; }
     .preview-title { flex-wrap: wrap; gap: 2px 10px; }
-
+ 
     @media (hover: none) and (pointer: coarse) {
       .txt-desktop { display: none; }
       .txt-touch { display: inline; }
     }
-
+ 
     @media (pointer: coarse) {
       .preset-chip { min-height: 38px; padding: 8px 14px; }
       .check-label { min-height: 32px; }
       .check-label input { width: 20px; height: 20px; }
     }
-
+ 
     @media (max-width: 760px) {
       /* 16px stops iOS from zooming the page when an input is focused */
       .text-input, .select-input { font-size: 16px !important; }
       body { background-attachment: scroll; }
     }
-
+ 
     @media (max-width: 520px) {
       .page-wrap {
         gap: 12px;
@@ -893,34 +897,34 @@
       .workspace-grid { gap: 12px; }
       .panel-card { padding: 16px; gap: 14px; }
       .section-header { flex-wrap: wrap; gap: 6px; }
-
+ 
       /* Preview rows: label on top, names get the full width and wrap */
       .preview-row { flex-wrap: wrap; white-space: normal; row-gap: 4px; }
       .preview-row-label { flex-basis: 100%; min-width: 0; }
-      .name-pill-old, .name-pill-new, .path-code {
+      .name-pill-old, .name-pill-New, .path-code {
         white-space: normal;
         overflow-wrap: anywhere;
         text-overflow: clip;
         max-width: 100%;
       }
-
+ 
       .dropzone-area { min-height: 170px; padding: 20px 14px; }
       .dropzone-heading { font-size: 0.98rem; }
       .dropzone-desc { font-size: 0.8rem; }
       .file-status-pill { white-space: normal; text-align: center; border-radius: 14px; overflow: visible; }
-
+ 
       .button-bar { gap: 8px; }
       .btn-primary-green { flex: 1 1 100%; }
       .btn-secondary { flex: 1 1 calc(50% - 4px); }
-
+ 
       .progress-top { align-items: flex-start; gap: 10px; }
       #percentText { flex-shrink: 0; }
-
+ 
       details.tech-drawer summary { flex-wrap: wrap; gap: 4px 10px; }
       details.tech-drawer summary::after { content: 'Show ▾'; }
       .tech-grid > div:last-child { text-align: left !important; }
     }
-
+ 
     /* ==========================================================================
        10. EXTRAORDINARY POLISH — aurora, glass, motion
        ========================================================================== */
@@ -936,7 +940,7 @@
     @keyframes sdShine { 55%, 100% { transform: translateX(120%); } }
     @keyframes sdFloat { 50% { transform: translateY(-6px); } }
     @keyframes sdFlow { to { background-position: -200% 0; } }
-
+ 
     .header-bar, .panel-card {
       background: rgba(255, 255, 255, 0.72);
       -webkit-backdrop-filter: blur(16px) saturate(1.4);
@@ -950,7 +954,7 @@
       background: linear-gradient(90deg, #0a1b36 0%, #1d63e8 55%, #0891b2 100%);
       -webkit-background-clip: text; background-clip: text; color: transparent;
     }
-
+ 
     .btn-primary-green { position: relative; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; }
     .btn-primary-green::after {
       content: ''; position: absolute; inset: 0; pointer-events: none;
@@ -959,7 +963,7 @@
     }
     .btn-primary-green:disabled::after { display: none; }
     .btn-primary-green:hover:not(:disabled) { transform: translateY(-2px); }
-
+ 
     .dropzone-area {
       background: radial-gradient(circle at 50% 0%, rgba(96, 165, 250, 0.2), transparent 70%), rgba(240, 247, 255, 0.8);
       transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
@@ -970,7 +974,7 @@
     }
     .upload-circle { animation: sdFloat 3.2s ease-in-out infinite; box-shadow: 0 10px 28px -6px rgba(29, 99, 232, 0.45); }
     .dropzone-area.drag-over .upload-circle { animation-duration: 0.8s; }
-
+ 
     .progress-track { box-shadow: inset 0 1px 3px rgba(23, 78, 194, 0.18); }
     #progressBar {
       background: linear-gradient(90deg, #1d63e8, #06b6d4, #1d63e8); background-size: 200% 100%;
@@ -979,7 +983,7 @@
     .preset-chip, .btn-secondary { transition: transform 0.15s, box-shadow 0.2s, background 0.2s; }
     .preset-chip:hover, .btn-secondary:hover:not(:disabled) { transform: translateY(-1px); }
     .preset-chip.active { box-shadow: 0 6px 16px -6px rgba(29, 99, 232, 0.55); }
-
+ 
     /* Technical drawer extras */
     details.tech-drawer { background: rgba(255, 255, 255, 0.62); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
     .tech-drawer .select-input { padding: 7px 10px; font-size: 0.84rem; }
@@ -987,19 +991,37 @@
     .tech-checks { display: flex; flex-direction: column; gap: 6px; }
     .tech-actions { display: flex; flex-wrap: wrap; gap: 8px; }
     .tech-actions .preset-chip { flex: 1 1 auto; text-align: center; }
-
+ 
     /* Busy lock + cancel */
     .is-busy .workspace-grid > .panel-card:first-child, .is-busy .tech-grid { pointer-events: none; opacity: 0.6; }
     .is-busy #clearBtn { background: #fee2e2; color: #b91c1c; border-color: #fecaca; }
-
+ 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation: none !important; transition: none !important; }
     }
+ 
+    /* Estimated folder size */
+    .size-estimate {
+      background: linear-gradient(135deg, rgba(29, 99, 232, 0.08), rgba(6, 182, 212, 0.12));
+      border: 1px solid var(--border-highlight);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+    }
+    .est-title { font-size: 0.68rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--blue-main); }
+    .est-line {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin-top: 4px;
+      font-family: var(--font-mono); font-size: 0.84rem; font-weight: 600; color: var(--text-primary);
+    }
+    .est-arrow { color: var(--blue-main); font-weight: 800; }
+    .est-to { color: var(--cyan-dark); }
+    .est-note { font-size: 0.74rem; color: var(--text-muted); margin-top: 4px; line-height: 1.4; }
+    .size-estimate.warn { border-color: #fbbf24; background: #fffbeb; }
+    .size-estimate.warn .est-to { color: #b45309; }
   </style>
 </head>
 <body>
   <div class="page-wrap">
-
+ 
     <!-- ========================================================================
          1. HEADER
          ======================================================================== -->
@@ -1018,18 +1040,18 @@
           <div class="brand-sub">Instant, easy PDF &amp; ZIP size converter — ready in one click</div>
         </div>
       </div>
-
+ 
       <div class="trust-pill">
         <span class="trust-dot"></span>
         100% Private • Works directly in your browser
       </div>
     </header>
-
+ 
     <!-- ========================================================================
          2. MAIN WORKSPACE (ALL ESSENTIAL CONTROLS & PREVIEWS VISIBLE)
          ======================================================================== -->
     <main class="workspace-grid">
-
+ 
       <!-- LEFT PANEL: MODE, TARGET SIZE, HIGHLIGHTED NAMING & LIVE PREVIEW -->
       <section class="panel-card" aria-label="Settings and Naming Preview">
         <!-- Step 1: Mode -->
@@ -1048,7 +1070,7 @@
             </button>
           </div>
         </div>
-
+ 
         <!-- Step 2: Target Size -->
         <div class="section-block">
           <div class="section-header">
@@ -1060,9 +1082,10 @@
               type="number"
               id="targetValueInput"
               class="text-input"
-              min="1"
+              min="0.01"
               max="500000"
-              step="0.1"
+              step="any"
+              placeholder="e.g. 3.24"
               inputmode="decimal"
               value="2"
               aria-label="Target size"
@@ -1079,8 +1102,13 @@
             <button type="button" class="preset-chip" data-val="5" data-unit="MB">5 MB</button>
             <button type="button" class="preset-chip" data-val="10" data-unit="MB">10 MB</button>
           </div>
+          <div class="size-estimate" id="sizeEstimate" aria-live="polite">
+            <div class="est-title">Estimated folder size</div>
+            <div class="est-line"><span id="estFrom"></span><span class="est-arrow">→</span><span class="est-to" id="estTo"></span></div>
+            <div class="est-note" id="estNote"></div>
+          </div>
         </div>
-
+ 
         <!-- Step 3: Highlighted Custom ZIP & Custom PDF File Name (Unhidden) -->
         <div class="naming-highlight-card">
           <div class="naming-card-header">
@@ -1108,14 +1136,14 @@
             </div>
           </div>
         </div>
-
+ 
         <!-- Live File Name Preview (Old -> New & Inside Folder Path) -->
         <div class="preview-card" aria-live="polite">
           <div class="preview-title">
             <span>Live Output Name Preview</span>
             <span class="preview-status-tag" id="previewModeNote">Default Automatic Naming</span>
           </div>
-
+ 
           <!-- Old File Name -> New File Name -->
           <div class="preview-row" title="Shows original PDF name and the new renamed PDF">
             <span class="preview-row-label">PDF:</span>
@@ -1123,7 +1151,7 @@
             <span class="arrow-icon">➔</span>
             <span class="name-pill-new" id="previewNewPdf">PDF1_Increased.pdf</span>
           </div>
-
+ 
           <!-- ZIP Archive Name -->
           <div class="preview-row" title="The downloaded ZIP archive name">
             <span class="preview-row-label">📦 ZIP:</span>
@@ -1131,7 +1159,7 @@
             <span class="arrow-icon">➔</span>
             <span class="path-code" id="previewZipFile">PDF_Increased.zip</span>
           </div>
-
+ 
           <!-- Exact Inside Path -->
           <div class="preview-row" title="Folder and file path inside the downloaded ZIP">
             <span class="preview-row-label">📄 Inside:</span>
@@ -1139,7 +1167,7 @@
           </div>
         </div>
       </section>
-
+ 
       <!-- RIGHT PANEL: DROPZONE, ACTION BAR & PROGRESS -->
       <section class="panel-card" aria-label="Upload and Download">
         <div class="section-block" style="flex: 1;">
@@ -1147,7 +1175,7 @@
             <span>4. Upload PDFs or ZIP Archives</span>
             <button type="button" id="sampleBtn" class="preset-chip" style="padding: 3px 10px;">+ Load Sample PDF</button>
           </div>
-
+ 
           <!-- Dashed Dropzone -->
           <div class="dropzone-area" id="dropzone" tabindex="0" role="button" aria-label="Upload PDF or ZIP files">
             <input type="file" id="fileInput" multiple accept=".pdf,.zip,application/pdf,application/zip" />
@@ -1162,7 +1190,7 @@
             <div class="dropzone-desc">Upload one or more PDF files, or a ZIP archive containing PDFs</div>
             <div class="file-status-pill" id="queuePill">No files selected (Previewing: PDF1.pdf)</div>
           </div>
-
+ 
           <!-- Action Buttons -->
           <div class="button-bar">
             <button type="button" id="processBtn" class="btn btn-primary-green" disabled>
@@ -1173,17 +1201,17 @@
               </svg>
               <span>Resize &amp; Download ZIP</span>
             </button>
-
+ 
             <button type="button" id="redownloadBtn" class="btn btn-secondary" disabled>
               Download Again
             </button>
-
+ 
             <button type="button" id="clearBtn" class="btn btn-secondary" disabled>
               Clear
             </button>
           </div>
         </div>
-
+ 
         <!-- Progress Strip -->
         <div class="progress-card">
           <div class="progress-top">
@@ -1201,14 +1229,14 @@
           </div>
         </div>
       </section>
-
+ 
     </main>
-
+ 
     <!-- ========================================================================
          3. BOTTOM AREA: HIDDEN TECHNICAL SETTINGS/LOGS & BRIEF ARCHIVE NOTE
          ======================================================================== -->
     <footer class="bottom-area">
-
+ 
       <!-- Technical Stuff & Activity Log Kept Hidden by Default -->
       <details class="tech-drawer">
         <summary>Technical Settings &amp; File Activity Log (Optional)</summary>
@@ -1222,7 +1250,7 @@
                 <option value="25">25 files per batch</option>
               </select>
             </div>
-
+ 
             <div>
               <label class="input-label-small" for="metadataSelect">Decrease Mode Cleanup</label>
               <select id="metadataSelect" class="select-input" style="padding: 7px 10px; font-size: 0.84rem;">
@@ -1230,7 +1258,7 @@
                 <option value="keep_title">Keep Title/Author &amp; Compress</option>
               </select>
             </div>
-
+ 
             <div style="display: flex; flex-direction: column; gap: 6px;">
               <label class="check-label">
                 <input type="checkbox" id="includeNonPdfCheck" />
@@ -1241,12 +1269,12 @@
                 Auto-download ZIP when complete
               </label>
             </div>
-
+ 
             <div style="text-align: right;">
               <button type="button" id="resetDefaultsBtn" class="preset-chip">Reset All Settings to Default</button>
             </div>
           </div>
-
+ 
           <div class="tech-section-title">Advanced Options</div>
           <div class="tech-grid">
             <div><label class="input-label-small" for="sortSelect">Processing Order</label><select id="sortSelect" class="select-input"><option value="upload" selected>Upload order</option><option value="natural">Name A→Z (PDF2 before PDF10)</option><option value="small">Smallest first</option><option value="large">Largest first</option></select></div>
@@ -1264,14 +1292,14 @@
             <button type="button" id="saveLogBtn" class="preset-chip">Download Log</button>
             <button type="button" id="clearLogBtn" class="preset-chip">Clear Log</button>
           </div>
-
+ 
           <div>
             <div class="input-label-small">Detailed File Log</div>
             <div class="log-terminal" id="logBox" role="log" aria-live="polite"></div>
           </div>
         </div>
       </details>
-
+ 
       <!-- Small, Precise Website & Archive.org Description -->
       <div class="footer-note">
         <div>
@@ -1281,24 +1309,24 @@
           <em>Note: Increased files use a safe embedded stream (~180B overhead, landing right near target). Decreased files are only replaced when the compressed result is smaller.</em>
         </div>
       </div>
-
+ 
       <!-- Credit -->
       <div class="credit-line">Developed by <strong>Rizwan</strong> for the team</div>
-
+ 
     </footer>
-
+ 
   </div>
-
+ 
   <!-- ==========================================================================
        4. APPLICATION JAVASCRIPT
        ========================================================================== -->
   <script>
     (function () {
       'use strict';
-
+ 
       const STORAGE_KEY = 'scaledock_settings_v2';
       const STREAM_OVERHEAD_BYTES = 180;
-
+ 
       const DEFAULT_SETTINGS = {
         mode: 'increase',          // 'increase' | 'decrease'
         targetValue: 2,            // 2 MB default
@@ -1317,7 +1345,7 @@
         skipDuplicates: true,
         includeReport: false
       };
-
+ 
       let state = {
         settings: { ...DEFAULT_SETTINGS },
         queuedFiles: [],
@@ -1327,7 +1355,7 @@
         cancel: false,
         logLines: []
       };
-
+ 
       const el = {
         modeIncreaseBtn: document.getElementById('modeIncreaseBtn'),
         modeDecreaseBtn: document.getElementById('modeDecreaseBtn'),
@@ -1335,17 +1363,17 @@
         targetUnitSelect: document.getElementById('targetUnitSelect'),
         presetChips: document.querySelectorAll('.preset-row .preset-chip'),
         savedIndicator: document.getElementById('savedIndicator'),
-
+ 
         customZipInput: document.getElementById('customZipInput'),
         customPdfInput: document.getElementById('customPdfInput'),
-
+ 
         previewModeNote: document.getElementById('previewModeNote'),
         previewOldPdf: document.getElementById('previewOldPdf'),
         previewNewPdf: document.getElementById('previewNewPdf'),
         previewOldSource: document.getElementById('previewOldSource'),
         previewZipFile: document.getElementById('previewZipFile'),
         previewInsidePath: document.getElementById('previewInsidePath'),
-
+ 
         dropzone: document.getElementById('dropzone'),
         fileInput: document.getElementById('fileInput'),
         queuePill: document.getElementById('queuePill'),
@@ -1353,7 +1381,7 @@
         processBtn: document.getElementById('processBtn'),
         redownloadBtn: document.getElementById('redownloadBtn'),
         clearBtn: document.getElementById('clearBtn'),
-
+ 
         statusText: document.getElementById('statusText'),
         percentText: document.getElementById('percentText'),
         progressBar: document.getElementById('progressBar'),
@@ -1361,7 +1389,7 @@
         metricOrig: document.getElementById('metricOrig'),
         metricNew: document.getElementById('metricNew'),
         metricTime: document.getElementById('metricTime'),
-
+ 
         batchSizeSelect: document.getElementById('batchSizeSelect'),
         metadataSelect: document.getElementById('metadataSelect'),
         includeNonPdfCheck: document.getElementById('includeNonPdfCheck'),
@@ -1371,7 +1399,7 @@
       };
       ['sortSelect','folderSelect','suffixSelect','padSelect','verifyCheck','skipDupCheck','reportCheck','selfTestBtn','saveLogBtn','clearLogBtn']
         .forEach(id => { el[id] = document.getElementById(id); });
-
+ 
       /* ------------------------------------------------------------------------
          UTILITY FUNCTIONS
          ------------------------------------------------------------------------ */
@@ -1380,9 +1408,10 @@
         if (bytes < 1024) return `${bytes} B`;
         const kb = bytes / 1024;
         if (kb < 1024) return `${kb.toFixed(1)} KB`;
-        return `${(kb / 1024).toFixed(2)} MB`;
+        const mb = kb / 1024;
+        return mb < 1024 ? `${mb.toFixed(2)} MB` : `${(mb / 1024).toFixed(2)} GB`;
       }
-
+ 
       function getTargetBytes() {
         const val = parseFloat(state.settings.targetValue);
         const safeVal = Number.isFinite(val) && val > 0 ? val : 2;
@@ -1390,28 +1419,28 @@
           ? Math.round(safeVal * 1024)
           : Math.round(safeVal * 1024 * 1024);
       }
-
+ 
       function cleanName(str, fallback = '') {
         const cleaned = String(str || '').replace(/[<>:"/\\|?*\x00-\x1F]/g, '_').trim();
         return cleaned.length > 0 ? cleaned : fallback;
       }
-
+ 
       function stripExt(filename) {
         const idx = filename.lastIndexOf('.');
         return idx > 0 ? filename.slice(0, idx) : filename;
       }
-
+ 
       function isSystemJunk(path) {
         const norm = path.replace(/\\/g, '/');
         if (norm.includes('__MACOSX/')) return true;
         const base = norm.split('/').pop() || '';
         return base === '.DS_Store' || base === 'Thumbs.db' || base.startsWith('._');
       }
-
+ 
       function esc(t) {
         return String(t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
       }
-
+ 
       function writeLog(type, tag, msg) {
         const row = document.createElement('div');
         row.className = 'log-item';
@@ -1422,20 +1451,20 @@
         state.logLines.push(`${new Date().toISOString()} [${tag}] ${msg}`);
         if (state.logLines.length > 5000) state.logLines.shift();
       }
-
+ 
       async function ensureLibs() {
         const t0 = Date.now();
         const ready = () => typeof JSZip !== 'undefined' && typeof PDFLib !== 'undefined';
         while (!ready() && Date.now() - t0 < 10000) await new Promise(r => setTimeout(r, 150));
         if (!ready()) throw new Error('The PDF/ZIP engines could not load. Check the connection, or allow cdnjs.cloudflare.com / cdn.jsdelivr.net.');
       }
-
+ 
       function setProgress(p, text) {
         el.percentText.textContent = `${p}%`;
         el.progressBar.style.width = `${p}%`;
         if (text) el.statusText.textContent = text;
       }
-
+ 
       /* ------------------------------------------------------------------------
          PERSISTENT SETTINGS (localStorage + Cookie Fallback)
          ------------------------------------------------------------------------ */
@@ -1454,7 +1483,7 @@
           } catch (_) {}
         }
       }
-
+ 
       function saveSettings() {
         const payload = JSON.stringify(state.settings);
         try { localStorage.setItem(STORAGE_KEY, payload); } catch (_) {}
@@ -1463,7 +1492,7 @@
         } catch (_) {}
         el.savedIndicator.textContent = 'Saved automatically ✓';
       }
-
+ 
       /* ------------------------------------------------------------------------
          NAMING & LIVE PREVIEW ENGINE
          - Shows `<Old Name> -> <New Name>` both when untouched and when modified.
@@ -1478,27 +1507,27 @@
           default: return inc ? '_Increased' : '_Decreased';
         }
       }
-
+ 
       function trimSeriesNumber(stem) {
         const trimmed = stem.replace(/[\s_\-.]*\(?\d+\)?$/, '').replace(/[\s_\-.]+$/, '');
         return trimmed || stem;
       }
-
+ 
       // first1 … first10 -> "first"; report_jan + report_feb -> "report"; otherwise the first PDF's name
       function commonBaseName(stems) {
         if (stems.length === 0) return '';
         if (stems.length === 1) return trimSeriesNumber(stems[0]);
-
+ 
         const trimmed = stems.map(trimSeriesNumber);
         const first = trimmed[0];
         const lower = trimmed.map(t => t.toLowerCase());
-
+ 
         if (lower.every(t => t === lower[0])) return first;
-
+ 
         let len = 0;
         while (len < lower[0].length && lower.every(t => t[len] === lower[0][len])) len++;
         let prefix = first.slice(0, len);
-
+ 
         const isSep = ch => /[\s_\-.]/.test(ch);
         const endsOnWord = lower.every(t => t.length === len || isSep(t[len]));
         if (!endsOnWord) {
@@ -1508,7 +1537,7 @@
         prefix = prefix.replace(/[\s_\-.(]+$/, '');
         return prefix.length >= 3 ? prefix : first;
       }
-
+ 
       // One shared folder / ZIP name for the whole batch, never numbered: <common name>_increased
       function getRootFolderName() {
         const suffix = getSuffix();
@@ -1518,24 +1547,24 @@
         const base = commonBaseName(stems) || 'PDF';
         return `${cleanName(base, 'PDF')}${suffix}`;
       }
-
+ 
       function buildFileNaming(relPath, sequenceNumber) {
         const suffix = getSuffix();
         const parts = relPath.replace(/\\/g, '/').split('/').filter(Boolean);
         const originalFile = parts.pop() || 'PDF1.pdf';
         const originalStem = cleanName(stripExt(originalFile), 'PDF1');
         const rootFolder = getRootFolderName();
-
+ 
         // PDF File Name: either `<customPdfName><seq>.pdf` (PDF1 -> NewPDF1) or `<originalStem>_Increased.pdf`
         const customPdfStem = cleanName(state.settings.customPdfName.replace(/\.pdf$/i, ''), '');
         const newPdfFileName = customPdfStem
           ? `${customPdfStem}${String(sequenceNumber).padStart(Number(state.settings.numberPad) || 0, '0')}.pdf`
           : `${originalStem}${suffix}.pdf`;
-
+ 
         // Keep sub-folders from uploaded ZIPs, but avoid repeating the root folder name
         const subFolders = parts.map(p => `${cleanName(p, 'Folder')}${suffix}`);
         if (subFolders[0] && subFolders[0].toLowerCase() === rootFolder.toLowerCase()) subFolders.shift();
-
+ 
         return {
           originalFileName: originalFile,
           rootFolder,
@@ -1543,18 +1572,63 @@
           insideZipPath: state.settings.folderMode === 'flat' ? newPdfFileName : [rootFolder, ...subFolders, newPdfFileName].join('/')
         };
       }
-
+ 
       function resolveOutputZipName() {
         const customZip = cleanName(state.settings.customZipName.replace(/\.zip$/i, ''), '');
         return `${customZip || getRootFolderName()}.zip`;
       }
-
+ 
+      function updateEstimate() {
+        const from = document.getElementById('estFrom');
+        const to = document.getElementById('estTo');
+        const note = document.getElementById('estNote');
+        const box = document.getElementById('sizeEstimate');
+        if (!from || !to || !note || !box) return;
+ 
+        const inc = state.settings.mode === 'increase';
+        const target = getTargetBytes();
+        const files = state.queuedFiles;
+        const isZip = f => f.name.toLowerCase().endsWith('.zip') || (f.type || '').includes('zip');
+        const noun = n => `${n} file${n === 1 ? '' : 's'}`;
+        let msg = '', warn = false;
+ 
+        if (files.length === 0) {
+          const n = 10;
+          from.textContent = `e.g. ${noun(n)} (${formatSize(1024 * 1024)})`;
+          to.textContent = inc ? `new ${noun(n)} (${formatSize(n * Math.max(100 * 1024, target))})` : `new ${noun(n)} (smaller)`;
+          msg = 'Add your PDFs to see the real folder size.';
+        } else {
+          const zips = files.filter(isZip);
+          const pdfs = files.filter(f => !isZip(f));
+          const origTotal = files.reduce((a, f) => a + (f.size || 0), 0);
+          let newTotal = zips.reduce((a, f) => a + (f.size || 0), 0);
+          let kept = 0;
+          pdfs.forEach(f => {
+            const sz = f.size || 0;
+            if (inc) { newTotal += Math.max(sz, target); if (sz >= target) kept++; }
+            else newTotal += sz;
+          });
+          from.textContent = `${noun(files.length)} (${formatSize(origTotal)})`;
+          to.textContent = `new ${noun(files.length)} (${inc ? '' : 'up to '}${formatSize(newTotal)})`;
+          msg = inc
+            ? `Each PDF becomes ${formatSize(target)}` + (kept ? ` · ${kept} already at or above that stay unchanged` : '')
+            : 'Only PDFs that get smaller are replaced; the exact size is known after processing';
+          if (zips.length) msg += ' · PDFs inside ZIPs are counted when you press Resize, so the final folder will be larger';
+          warn = inc && newTotal > 1.5 * 1024 ** 3;
+          if (warn) msg += ' · Very large: your browser may run out of memory';
+        }
+        note.textContent = msg;
+        box.classList.toggle('warn', warn);
+      }
+ 
       function syncUI() {
         const s = state.settings;
-
+ 
         el.modeIncreaseBtn.classList.toggle('active', s.mode === 'increase');
         el.modeDecreaseBtn.classList.toggle('active', s.mode === 'decrease');
-        el.targetValueInput.value = s.targetValue;
+        if (document.activeElement !== el.targetValueInput || parseFloat(el.targetValueInput.value) !== Number(s.targetValue)) {
+          el.targetValueInput.value = s.targetValue;
+        }
         el.targetUnitSelect.value = s.targetUnit;
         el.customZipInput.value = s.customZipName;
         el.customPdfInput.value = s.customPdfName;
@@ -1569,29 +1643,29 @@
         el.verifyCheck.checked = Boolean(s.verifyOutput);
         el.skipDupCheck.checked = Boolean(s.skipDuplicates);
         el.reportCheck.checked = Boolean(s.includeReport);
-
+ 
         el.customZipInput.placeholder = `Auto: ${getRootFolderName()}`;
-
+ 
         el.presetChips.forEach(chip => {
           const match = parseFloat(chip.dataset.val) === parseFloat(s.targetValue) && chip.dataset.unit === s.targetUnit;
           chip.classList.toggle('active', match);
         });
-
+ 
         // Determine sample or actual queued file name for the live preview
         const firstQueuedName = state.queuedFiles.length > 0
           ? state.queuedFiles[0].name
           : 'PDF1.pdf';
-
+ 
         const samplePdfName = firstQueuedName.toLowerCase().endsWith('.zip')
           ? `${stripExt(firstQueuedName)}.pdf`
           : firstQueuedName;
-
+ 
         const preview = buildFileNaming(samplePdfName, 1);
         const zipName = resolveOutputZipName();
-
+ 
         const hasCustom = Boolean(cleanName(s.customZipName) || cleanName(s.customPdfName));
         el.previewModeNote.textContent = hasCustom ? 'Custom Naming Active' : 'Default Automatic Naming';
-
+ 
         el.previewOldPdf.textContent = preview.originalFileName;
         el.previewNewPdf.textContent = preview.newPdfFileName;
         el.previewOldSource.textContent = state.queuedFiles.length > 1 ? `${state.queuedFiles.length} files` : firstQueuedName;
@@ -1600,8 +1674,9 @@
         el.previewNewPdf.title = preview.newPdfFileName;
         el.previewZipFile.title = zipName;
         el.previewInsidePath.title = preview.insideZipPath;
+        updateEstimate();
       }
-
+ 
       /* ------------------------------------------------------------------------
          PDF RESIZING CORE (INCREASE & DECREASE)
          ------------------------------------------------------------------------ */
@@ -1617,25 +1692,25 @@
         }
         return buf;
       }
-
+ 
       async function increasePdfToTarget(originalBytes, targetBytes) {
         if (originalBytes.byteLength >= targetBytes) {
           return { bytes: originalBytes, tag: 'SKIPPED (Already >= target)' };
         }
-
+ 
         const pdfDoc = await PDFLib.PDFDocument.load(originalBytes, {
           ignoreEncryption: true,
           updateMetadata: false
         });
-
+ 
         const baseBytes = await pdfDoc.save({ useObjectStreams: false });
         if (baseBytes.byteLength >= targetBytes) {
           return { bytes: baseBytes, tag: 'INCREASED' };
         }
-
+ 
         const padLength = Math.max(16, targetBytes - baseBytes.byteLength - STREAM_OVERHEAD_BYTES);
         const padData = generateRandomBytes(padLength);
-
+ 
         const stream = pdfDoc.context.stream(padData, {
           Type: 'EmbeddedFile',
           Subtype: 'application/octet-stream',
@@ -1643,17 +1718,17 @@
         });
         const ref = pdfDoc.context.register(stream);
         pdfDoc.catalog.set(PDFLib.PDFName.of('ScaleDock_Ballast'), ref);
-
+ 
         const outBytes = await pdfDoc.save({ useObjectStreams: false });
         return { bytes: outBytes, tag: 'INCREASED' };
       }
-
+ 
       async function decreasePdfSize(originalBytes, policy) {
         const pdfDoc = await PDFLib.PDFDocument.load(originalBytes, {
           ignoreEncryption: true,
           updateMetadata: false
         });
-
+ 
         if (policy === 'strip_all') {
           pdfDoc.setTitle('');
           pdfDoc.setAuthor('');
@@ -1670,14 +1745,14 @@
           if (ref instanceof PDFLib.PDFRef) pdfDoc.context.delete(ref);
           pdfDoc.catalog.delete(name);
         }
-
+ 
         const compressed = await pdfDoc.save({ useObjectStreams: true, addDefaultPage: false });
         if (compressed.byteLength < originalBytes.byteLength) {
           return { bytes: compressed, tag: 'DECREASED' };
         }
         return { bytes: originalBytes, tag: 'KEPT ORIGINAL (Already smaller)' };
       }
-
+ 
       /* ------------------------------------------------------------------------
          FILE QUEUE & BATCH EXECUTION
          ------------------------------------------------------------------------ */
@@ -1700,7 +1775,7 @@
         if (count > 0) writeLog('info', 'QUEUED', `Added ${count} file(s) to queue.`);
         if (dups > 0) writeLog('info', 'SKIPPED', `${dups} duplicate file(s) ignored.`);
       }
-
+ 
       function updateQueueUI() {
         const total = state.queuedFiles.length;
         if (total === 0) {
@@ -1715,7 +1790,7 @@
         el.processBtn.disabled = total === 0 || state.isBusy;
         el.clearBtn.disabled = !state.isBusy && total === 0;
       }
-
+ 
       async function unpackQueuedFiles() {
         const list = [];
         for (const f of state.queuedFiles) {
@@ -1740,14 +1815,14 @@
         }
         return list;
       }
-
+ 
       function setBusyUI(busy) {
         document.body.classList.toggle('is-busy', busy);
         if (!el.clearBtn.dataset.label) el.clearBtn.dataset.label = el.clearBtn.textContent.trim();
         if (el.clearBtn.children.length === 0) el.clearBtn.textContent = busy ? 'Cancel' : el.clearBtn.dataset.label;
         el.selfTestBtn.disabled = busy;
       }
-
+ 
       function sortItems(list) {
         const mode = state.settings.sortOrder;
         const col = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
@@ -1756,13 +1831,13 @@
         else if (mode === 'small') list.sort((a, b) => a.bytes.byteLength - b.bytes.byteLength);
         else if (mode === 'large') list.sort((a, b) => b.bytes.byteLength - a.bytes.byteLength);
       }
-
+ 
       function csvCell(v) {
         let t = String(v);
         if (/^[=+\-@\t\r]/.test(t)) t = "'" + t;
         return /[",\n\r]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t;
       }
-
+ 
       async function resizeOne(item, seq, targetBytes) {
         const naming = buildFileNaming(item.relPath, seq);
         const origLen = item.bytes.byteLength;
@@ -1778,7 +1853,7 @@
           return { naming, bytes: item.bytes, origLen, newLen: origLen, tag: 'FLAGGED (Unreadable — kept original)', flagged: true };
         }
       }
-
+ 
       async function processAll() {
         if (state.isBusy || state.queuedFiles.length === 0) return;
         state.isBusy = true;
@@ -1787,39 +1862,39 @@
         updateQueueUI();
         el.redownloadBtn.disabled = true;
         const t0 = performance.now();
-
+ 
         try {
           await ensureLibs();
           setProgress(4, 'Reading files...');
           const workItems = await unpackQueuedFiles();
           const pdfItems = workItems.filter(x => x.isPdf);
           const extraItems = workItems.filter(x => !x.isPdf);
-
+ 
           if (pdfItems.length === 0) {
             setProgress(0, 'No PDF files found in your upload.');
             writeLog('warn', 'EMPTY', 'No PDF files found.');
             return;
           }
-
+ 
           sortItems(pdfItems);
           const targetBytes = getTargetBytes();
           if (state.settings.mode === 'increase' && pdfItems.length * targetBytes > 1.5 * 1024 ** 3) {
             const msg = `This will create about ${formatSize(pdfItems.length * targetBytes)} of output and may exhaust your browser's memory. Continue?`;
             if (!window.confirm(msg)) { setProgress(0, 'Cancelled — nothing was created.'); return; }
           }
-
+ 
           const batchSize = Math.max(1, parseInt(state.settings.batchSize, 10) || 10);
           const outZip = new JSZip();
           const used = new Set();
           const rows = [['Original', 'Output Path', 'Original Bytes', 'New Bytes', 'Status']];
           let processed = 0, origSum = 0, newSum = 0, flagged = 0;
-
+ 
           for (let i = 0; i < pdfItems.length; i += batchSize) {
             if (state.cancel) throw new Error('CANCELLED');
             const batch = pdfItems.slice(i, i + batchSize);
             el.statusText.textContent = `Resizing PDFs (${i + 1}–${i + batch.length} of ${pdfItems.length})...`;
             const results = await Promise.all(batch.map((item, idx) => resizeOne(item, i + idx + 1, targetBytes)));
-
+ 
             for (const res of results) {
               processed++; origSum += res.origLen; newSum += res.newLen;
               if (res.flagged) flagged++;
@@ -1832,7 +1907,7 @@
                 `${res.naming.originalFileName} ➔ ${path} (${formatSize(res.origLen)} ➔ ${formatSize(res.newLen)})`);
             }
             batch.forEach(it => { it.bytes = null; });
-
+ 
             setProgress(Math.min(92, Math.round((processed / pdfItems.length) * 84) + 8));
             el.metricFiles.textContent = `${processed} / ${pdfItems.length}`;
             el.metricOrig.textContent = formatSize(origSum);
@@ -1840,19 +1915,19 @@
             el.metricTime.textContent = `${((performance.now() - t0) / 1000).toFixed(2)}s`;
             await new Promise(r => setTimeout(r, 8));
           }
-
+ 
           for (const extra of extraItems) outZip.file(extra.relPath, extra.bytes, { compression: 'STORE' });
           if (state.settings.includeReport) {
             outZip.file('ScaleDock_Report.csv', '\uFEFF' + rows.map(r => r.map(csvCell).join(',')).join('\r\n'));
           }
-
+ 
           el.statusText.textContent = 'Packaging ZIP...';
           const zipBlob = await outZip.generateAsync({ type: 'blob', compression: 'STORE' },
             meta => setProgress(92 + Math.round(meta.percent * 0.07)));
           const finalZipName = resolveOutputZipName();
           state.lastZipBlob = zipBlob;
           state.lastZipName = finalZipName;
-
+ 
           const totalSec = ((performance.now() - t0) / 1000).toFixed(2);
           el.metricTime.textContent = `${totalSec}s`;
           setProgress(100, `Complete! Prepared ${finalZipName} in ${totalSec}s` + (flagged ? ` — ${flagged} file(s) kept as original (unreadable)` : ''));
@@ -1872,7 +1947,7 @@
           updateQueueUI();
         }
       }
-
+ 
       async function runSelfTest() {
         if (state.isBusy) return;
         el.selfTestBtn.disabled = true;
@@ -1907,7 +1982,7 @@
           el.selfTestBtn.disabled = false;
         }
       }
-
+ 
       function triggerDownload(blob, filename) {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -1918,12 +1993,12 @@
         document.body.removeChild(a);
         setTimeout(() => URL.revokeObjectURL(url), 60000);
       }
-
+ 
       async function loadSamplePdf() {
         try { await ensureLibs(); await loadSamplePdfCore(); }
         catch (err) { writeLog('warn', 'ERROR', String(err && err.message ? err.message : err)); }
       }
-
+ 
       async function loadSamplePdfCore() {
         const doc = await PDFLib.PDFDocument.create();
         const page = doc.addPage([600, 400]);
@@ -1932,7 +2007,7 @@
         const file = new File([bytes], 'PDF1.pdf', { type: 'application/pdf' });
         addFiles([file]);
       }
-
+ 
       /* ------------------------------------------------------------------------
          EVENT LISTENERS
          ------------------------------------------------------------------------ */
@@ -1942,13 +2017,13 @@
           saveSettings();
           syncUI();
         });
-
+ 
         el.modeDecreaseBtn.addEventListener('click', () => {
           state.settings.mode = 'decrease';
           saveSettings();
           syncUI();
         });
-
+ 
         el.targetValueInput.addEventListener('input', () => {
           const val = parseFloat(el.targetValueInput.value);
           if (Number.isFinite(val) && val > 0) {
@@ -1957,13 +2032,15 @@
             syncUI();
           }
         });
-
+ 
+        el.targetValueInput.addEventListener('blur', syncUI);
+ 
         el.targetUnitSelect.addEventListener('change', () => {
           state.settings.targetUnit = el.targetUnitSelect.value;
           saveSettings();
           syncUI();
         });
-
+ 
         el.presetChips.forEach(chip => {
           chip.addEventListener('click', () => {
             state.settings.targetValue = parseFloat(chip.dataset.val);
@@ -1972,46 +2049,46 @@
             syncUI();
           });
         });
-
+ 
         el.customZipInput.addEventListener('input', () => {
           state.settings.customZipName = el.customZipInput.value;
           saveSettings();
           syncUI();
         });
-
+ 
         el.customPdfInput.addEventListener('input', () => {
           state.settings.customPdfName = el.customPdfInput.value;
           saveSettings();
           syncUI();
         });
-
+ 
         el.batchSizeSelect.addEventListener('change', () => {
           state.settings.batchSize = parseInt(el.batchSizeSelect.value, 10) || 10;
           saveSettings();
         });
-
+ 
         el.metadataSelect.addEventListener('change', () => {
           state.settings.metadataPolicy = el.metadataSelect.value;
           saveSettings();
         });
-
+ 
         el.includeNonPdfCheck.addEventListener('change', () => {
           state.settings.includeNonPdf = el.includeNonPdfCheck.checked;
           saveSettings();
         });
-
+ 
         el.autoDownloadCheck.addEventListener('change', () => {
           state.settings.autoDownload = el.autoDownloadCheck.checked;
           saveSettings();
         });
-
+ 
         el.resetDefaultsBtn.addEventListener('click', () => {
           state.settings = { ...DEFAULT_SETTINGS };
           try { localStorage.removeItem(STORAGE_KEY); } catch (_) {}
           saveSettings();
           syncUI();
         });
-
+ 
         [['sortSelect', 'sortOrder'], ['folderSelect', 'folderMode'], ['suffixSelect', 'suffixStyle'], ['padSelect', 'numberPad']]
           .forEach(([id, key]) => el[id].addEventListener('change', () => { state.settings[key] = el[id].value; saveSettings(); syncUI(); }));
         [['verifyCheck', 'verifyOutput'], ['skipDupCheck', 'skipDuplicates'], ['reportCheck', 'includeReport']]
@@ -2019,12 +2096,12 @@
         el.selfTestBtn.addEventListener('click', runSelfTest);
         el.saveLogBtn.addEventListener('click', () => triggerDownload(new Blob([state.logLines.join('\n')], { type: 'text/plain' }), 'ScaleDock_Log.txt'));
         el.clearLogBtn.addEventListener('click', () => { el.logBox.textContent = ''; state.logLines = []; });
-
+ 
         // Keep the page from navigating away when a file misses the dropzone; warn before leaving mid-run
         window.addEventListener('dragover', e => e.preventDefault());
         window.addEventListener('drop', e => e.preventDefault());
         window.addEventListener('beforeunload', e => { if (state.isBusy) { e.preventDefault(); e.returnValue = ''; } });
-
+ 
         el.dropzone.addEventListener('click', () => el.fileInput.click());
         el.dropzone.addEventListener('keydown', e => {
           if (e.key === 'Enter' || e.key === ' ') {
@@ -2032,41 +2109,41 @@
             el.fileInput.click();
           }
         });
-
+ 
         el.fileInput.addEventListener('change', e => {
           addFiles(e.target.files);
           el.fileInput.value = '';
         });
-
+ 
         ['dragenter', 'dragover'].forEach(evt => {
           el.dropzone.addEventListener(evt, e => {
             e.preventDefault();
             el.dropzone.classList.add('drag-over');
           });
         });
-
+ 
         ['dragleave', 'drop'].forEach(evt => {
           el.dropzone.addEventListener(evt, e => {
             e.preventDefault();
             el.dropzone.classList.remove('drag-over');
           });
         });
-
+ 
         el.dropzone.addEventListener('drop', e => {
           if (e.dataTransfer && e.dataTransfer.files) {
             addFiles(e.dataTransfer.files);
           }
         });
-
+ 
         el.sampleBtn.addEventListener('click', loadSamplePdf);
         el.processBtn.addEventListener('click', processAll);
-
+ 
         el.redownloadBtn.addEventListener('click', () => {
           if (state.lastZipBlob) {
             triggerDownload(state.lastZipBlob, state.lastZipName);
           }
         });
-
+ 
         el.clearBtn.addEventListener('click', () => {
           if (state.isBusy) { state.cancel = true; el.statusText.textContent = 'Cancelling...'; return; }
           state.queuedFiles = [];
@@ -2077,7 +2154,7 @@
           syncUI();
         });
       }
-
+ 
       loadSettings();
       syncUI();
       bindEvents();
@@ -2089,3 +2166,5 @@
   </script>
 </body>
 </html>
+
+Claude finished the response
